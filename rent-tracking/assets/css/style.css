@@ -1,0 +1,415 @@
+/* CUSTOM FONT FAMILY */
+@font-face {
+  font-family: 'poppins-v5-latin-900';
+  src: url('../../plugins/Poppins/poppins-v5-latin-900.woff') format('opentype');
+}
+
+@font-face {
+  font-family: 'poppins-v5-latin-regular';
+  src: url('../../plugins/Poppins/poppins-v5-latin-regular.woff') format('opentype');
+}
+
+
+:root {
+    --dark-green: #34372D;
+    --green: #5F7A5A;
+    --white: #ffffff;
+    --light-gray: #DFDFDF;
+    --orange: #E78E65;
+
+    /*old color*/
+	--semi-white: #f8f8f8;
+	--light-blue: #5C96FF;
+    --blue: #1F5ED2;
+	--black: #000000;
+	--gray: #333333;
+	--light-gray: #7A7A7A;
+	--PoppinsRegular: 'poppins-v5-latin-regular', sans-serif;
+    --Poppins900: 'poppins-v5-latin-900', sans-serif;
+	--border: 2px solid #dee2e6;
+}
+*{
+	font-family: var(--PoppinsRegular) !important;
+}
+button{
+	border: none;
+	border-radius: 8px;
+}
+
+.bookappointment:hover{
+    background: var(--white);
+    color: var(--light-blue) !important;
+    border-color: var(--light-blue) !important;
+}
+.btn-orange{
+	background: var(--light-blue);
+	color: var(--white);
+}
+.btn-black:hover{
+	background: var(--black);
+}
+.ff-HelveticaNeueBold{
+	font-family: var(--PoppinsRegular) !important;
+}
+
+.fw-400{
+	font-weight: 400 !important;
+}
+.fw-500{
+	font-weight: 500 !important;
+}
+.fw-600{
+	font-weight: 600 !important;
+}
+.fw-700{
+	font-weight: 700 !important;
+}
+.fw-800{
+	font-weight: 800 !important;
+}
+/*text color*/
+.text-black{
+	color: var(--black) !important;
+}
+.text-gray{
+	color: var(--gray) !important;
+}
+.text-light-gray{
+	color: var(--light-gray) !important;
+}
+.text-orange{
+	color: var(--light-blue) !important;
+}
+.text-semi-white{
+	color: var(--semi-white) !important;
+}
+
+/*bg color*/
+.bg-orange{
+	background: var(--light-blue);
+}
+.bg-semi-white{
+	background: var(--semi-white);
+}
+
+.div-font-size{
+    font-size: clamp(1rem, 0.9276rem + 0.297vw, 1.1875rem);
+}
+h1{
+	font-family: var(--Poppins900) !important;
+	font-weight: 900;
+	font-size: clamp(1.3rem, 0.6436rem + 2.6931vw, 3rem);
+    line-height: clamp(2.5rem, 2.0673rem + 1.9231vw, 3.75rem);
+	margin: 0;
+}
+h5{
+	font-family: var(--PoppinsRegular);
+	font-size: 19px;
+	margin: 0;
+}
+*{	
+	padding: 0;
+	margin: 0;
+	font-family: var(--font-family);
+}
+body{
+	height: 100vh;
+}
+
+.nav-bg{
+	background: var(--semi-white);
+}
+.nav-bg .offcanvas .navbar-nav li a{
+	font-weight: 700;
+	font-family: var(--PoppinsRegular);
+	color: var(--black);
+}
+.nav-bg .offcanvas .navbar-nav .dropdown{
+	width: 15em;
+}
+.sidebar a.nav-link:hover,
+.active-sidebar{
+    color: white !important;
+}
+/*HOVER*/
+div #fa-xmark:hover,
+div .fa-bars:hover,
+div a .fa-opencart:hover,
+form .fa-magnifying-glass:hover,
+.account a:hover,
+#navmenu-hover li a:hover {
+	color: var(--white) !important;
+}
+#desktop_pc .dropdown a.nav-link:hover{
+	background-color: var(--black);
+	color: var(--light-blue);
+}
+#mobile_pc .dropdown ul li a.dropdown-item:hover,
+.navbar-nav #desktop_pc .dropdown ul li a.dropdown-item:hover{
+	background-color: var(--light-blue) !important;
+	color: var(--white);
+}
+.carousel-btn:hover{
+	background-color: var(--black);
+}
+
+
+
+/* =====================Page Shop Filter ====================*/
+.pc-left-filter ul {
+    max-height: 230px;
+    overflow-y: scroll; /* Ensures the scrollbar is visible when content overflows */
+}
+
+/* WebKit browsers */
+.pc-left-filter ul::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+    background: black;
+    padding: 1px;
+    border: none;
+}
+
+/* Scrollbar track */
+.pc-left-filter ul::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the scrollbar track */
+    border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
+/*    border-radius: 10px; /* Rounded corners for the track */*/
+}
+
+/* Scrollbar thumb */
+.pc-left-filter ul::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scrollbar thumb */
+    border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
+/*    border-radius: 10px; /* Rounded corners for the thumb */*/
+}
+
+/* Scrollbar thumb on hover */
+.pc-left-filter ul::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color of the scrollbar thumb on hover */
+}
+
+/* Firefox */
+.pc-left-filter ul {
+    scrollbar-width: thin; /* Options: auto, thin, none */
+    scrollbar-color: black #f1f1f1; /* thumb color, track color */
+}
+
+/* Optional: For Edge and Internet Explorer */
+.pc-left-filter ul {
+    -ms-overflow-style: none;  /* IE and Edge */
+}
+
+
+.form-check-input:checked {
+    background-color: var(--light-blue);
+    border-color: var(--light-blue);
+}
+
+
+/* =====================Page Shop Card ====================*/
+.shop-card-img-div{
+	position: relative;
+}
+.shop-card:hover .shop-card-img-div:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+/*    border-radius: 1rem;*/
+border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
+    width: 100%; /* example width */
+    height: 100%; /* example height */
+    background: var(--white);
+    opacity: 0.4;
+    z-index: 1;
+    border: var(--border);
+}
+.shop-card-text{
+	display: none;
+}
+.shop-card:hover .shop-card-img-div .shop-card-text {
+	display: flex;
+	flex-direction: column;
+	width: 100%; 
+	position: absolute;
+	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+  	color: var(--gray) !important;
+  	z-index: 1;
+
+}
+.shop-card:hover img {
+	filter: blur(8px) !important;
+}
+
+/* =====================Page Contact Form ====================*/
+textarea{
+	min-height: 150px !important;
+}
+/* =====================Page About us ====================*/
+.about-us-text{
+	line-height: 26px;
+}
+/* =====================Page View Product ====================*/
+.view-img-big{
+	max-height: 690px;
+    max-width: 690px;
+    overflow: hidden;
+    display: flex;
+}
+.active-img-big{
+	display: block !important;
+}
+.view-img-big img {
+  	display: none;
+  	height: 460px;
+}
+.view-img-big img:hover {
+  transform: scale(1.2);
+}
+.view-img-small{
+	height: 100px;
+    width: 100px;
+}
+.view-radio{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: -1;
+}
+.view-label:hover,
+.active-view-radio{
+	border: 1px solid var(--light-blue) !important;
+}
+
+#quantity-div input[type=number]::-webkit-inner-spin-button,
+#quantity-div input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+#quantity-div input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+.add-to-cart{
+	border: 1px solid var(--light-blue);
+	background: var(--orange-rgba);
+	color: var(--light-blue);
+}
+.add-to-cart:hover{
+	background: transparent;
+}
+
+.buy-now{
+	border: 1px solid var(--light-blue);
+	background: var(--light-blue);
+	color: var(--white);
+}
+
+.buy-now:hover{
+	background: transparent;
+	color: var(--light-blue);
+}
+
+/*reviews and description body*/
+.rd-body #reviewsDiv,
+.rd-body #descriptionDiv{
+	display:  none;
+}
+
+.rd-body-active {
+	display:  flex !important;
+}
+
+
+/*sending email loader*/
+.email-loader-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .email-loader {
+    width: 70px;
+    height: 70px;
+    position: relative;
+  }
+
+  .email-loader:before {
+    content: "";
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 6px solid #007bff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  .email-loader:after {
+    content: "";
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 6px solid transparent;
+    border-top-color: #007bff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.6);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(0.6);
+      opacity: 1;
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .email-loaded .email-loader-container {
+    display: none;
+  }
+
+  
+@media (max-width: 600px) {
+		/*carousel*/
+    .carousel .carousel-inner {
+        height: 57vh !important;
+    }
+
+}
+
