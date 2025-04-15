@@ -1,0 +1,292 @@
+/* CUSTOM FONT FAMILY */
+@font-face {
+  font-family: 'poppins-v5-latin-900';
+  src: url('../../plugins/Poppins/poppins-v5-latin-900.woff') format('opentype');
+}
+
+@font-face {
+  font-family: 'poppins-v5-latin-regular';
+  src: url('../../plugins/Poppins/poppins-v5-latin-regular.woff') format('opentype');
+}
+:root {
+  --dark-red: #B62929;
+  --dark-yellow: #c5a20d;
+  --white: #ffffff;
+  --light-gray: #DFDFDF;
+  --orange: #E78E65;
+
+
+  /*old color*/
+  --semi-white: #f8f8f8;
+  --light-blue: #5C96FF;
+  --blue: #1F5ED2;
+  --black: #000000;
+  --gray: #333333;
+  --fourth-white: #f3f7fd; /* important color alternative for white */
+  --PoppinsRegular: 'poppins-v5-latin-regular', sans-serif;
+  --Poppins900: 'poppins-v5-latin-900', sans-serif;
+  --border: 2px solid #dee2e6;
+}
+*{
+	font-family: var(--PoppinsRegular) !important;
+}
+
+.default-btn {
+  border: none;
+  border-radius: 4px;
+}
+
+.dark-yellow{
+  background: var(--dark-yellow);
+}
+.dark-red{
+  background: var(--dark-green);
+}
+.border-red{
+  border-color: var(--dark-red) !important;
+}
+
+
+body{
+}
+.page-title{
+  color: var(--blue);
+}
+.content-div #header{
+	z-index: 100;
+	height: 70px;
+  background-color: var(--dark-green);
+}
+.sidebar #logo-div{
+	height: 70px;
+  background-color: var(--dark-red);
+}
+.icon-size{
+	width: 18px;
+	height: 24px;
+}
+.sidebar{
+	position: fixed;
+	z-index: 1000;
+	height: 100%;
+	width: 280px;
+	left: 0;
+	background: var(--dark-red);
+	color: var(--white);
+	transition: all 0.3s ease-out;
+}
+.sidebar-toggle{
+	left: -280px;
+}
+#menu-icon{
+	position: absolute;
+	right: -50px;
+}
+.content-div{
+	position: absolute;
+	width: calc(100% - 280px);
+	right: 0px !important;
+	top: 0px !important;
+	left: 280px;
+	height: 100%;
+	transition: all 0.3s ease-out;
+	overflow-x: hidden;
+}
+
+.content-div-toggle {
+    width: calc(100% - 0px);
+    left: 0;
+}
+.active-sidebar,
+.sidebar ul li a:hover{
+	background: var(--dark-yellow);
+	border-radius: 3px;
+	color: var(--white);
+}
+
+/*each page loader*/
+.loader-container{
+  z-index: 1001;
+  background-color: #ffffff;
+  position: fixed;
+  top: 70px;
+  bottom: 0;
+  right: 0;
+  left: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loader {
+  display: block;
+  width: 300px;
+  height: 8px;
+  border-radius: 30px;
+  background-color: rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.loader::before {
+  content: "";
+  position: absolute;
+  background: #0071e2;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  border-radius: 30px;
+  animation: moving 1s ease-in-out infinite;
+  ;
+}
+
+@keyframes moving {
+  50% {
+    width: 100%;
+  }
+
+  100% {
+    width: 0;
+    right: 0;
+    left: unset;
+  }
+}
+
+/*sending email loader*/
+.email-loader-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .email-loader {
+    width: 70px;
+    height: 70px;
+    position: relative;
+  }
+
+  .email-loader:before {
+    content: "";
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 6px solid #007bff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  .email-loader:after {
+    content: "";
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 6px solid transparent;
+    border-top-color: #007bff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0.6);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(0.6);
+      opacity: 1;
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .email-loaded .email-loader-container {
+    display: none;
+  }
+/*==========For lg reponsive ==========*/
+@media (max-width: 991px) {
+
+	.sidebar{
+		left: -280px;
+	}
+	.sidebar-toggle{
+		box-shadow: 0 8px 8px rgba(0, 0, 0, 0.15) !important;
+		left: 0;
+	}
+	.content-div{
+	    width: 100%;
+	    left: 0;
+	}	
+	
+}
+@media (max-width: 990px) {
+
+    .responsive-width{
+      width: 100% !important;
+    } 
+    
+  }
+
+/*==========For md reponsive ==========*/
+@media (max-width: 1348px) {
+	.loader-container{
+	  top: 70px;
+	  left: 0;
+	}
+	.table{
+		height: auto;
+	}
+	.table thead{
+		display: none;
+	}
+
+	.table, .table tbody, .table tr, .table td{
+		display: block;
+		width: 100%;
+	}
+
+	.table tr{
+		margin-bottom: 15px;
+
+	}
+	.table tbody tr td {
+		display: flex;
+		justify-content: flex-start;
+		text-align: left;
+		padding-left: 0;
+		position: relative;
+    word-wrap: break-word;
+		border: 1px solid #dee2e6 !important;
+
+	}
+	.table td:before{
+		content: attr(data-label);
+		width: 50%;
+		padding-left: 15px;
+		font-weight: 600;
+		font-size: 14px;
+		text-align: left;
+	}
+}
