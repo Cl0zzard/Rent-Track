@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 17, 2025 at 02:25 PM
+-- Generation Time: Apr 17, 2025 at 03:07 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -111,10 +111,14 @@ CREATE TABLE `transaction_history` (
 --
 
 INSERT INTO `transaction_history` (`transaction_history_id`, `stall_slots_id`, `balance`, `amount_paid`, `penalty`, `duedate`, `status`, `completed_date`) VALUES
-(183, 30, 10.00, NULL, 10.00, '2025-04-19', 2, NULL),
 (184, 26, 905.00, 100.00, 5.00, '2025-04-15', 3, NULL),
 (186, 26, 1405.00, 500.00, 905.00, '2025-04-16', 3, NULL),
-(187, 26, 2405.00, 0.00, 1405.00, '2025-05-17', 2, NULL);
+(187, 26, 0.00, 2405.00, 1405.00, '2025-05-17', 1, '2025-04-17'),
+(196, 26, 1000.00, 0.00, 0.00, '2025-06-16', 2, NULL),
+(197, 30, 1000.00, NULL, 0.00, '2025-03-16', 3, NULL),
+(198, 30, 1500.00, 500.00, 1000.00, '2025-04-16', 3, NULL),
+(199, 30, 0.00, 2500.00, 1500.00, '2025-05-16', 1, '2025-04-17'),
+(200, 30, 1000.00, 0.00, 0.00, '2025-06-15', 2, NULL);
 
 --
 -- Indexes for dumped tables
@@ -171,7 +175,7 @@ ALTER TABLE `stall_slots_file`
 -- AUTO_INCREMENT for table `transaction_history`
 --
 ALTER TABLE `transaction_history`
-  MODIFY `transaction_history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=188;
+  MODIFY `transaction_history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=201;
 
 --
 -- Constraints for dumped tables
@@ -187,7 +191,7 @@ DELIMITER $$
 --
 -- Events
 --
-CREATE DEFINER=`root`@`localhost` EVENT `create_next_due_entry` ON SCHEDULE EVERY 10 SECOND STARTS '2025-04-17 19:37:29' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+CREATE DEFINER=`root`@`localhost` EVENT `create_next_due_entry` ON SCHEDULE EVERY 10 SECOND STARTS '2025-04-17 20:44:54' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
     DECLARE done INT DEFAULT 0;
 
     DECLARE cur_stall_id INT;
@@ -199,6 +203,7 @@ CREATE DEFINER=`root`@`localhost` EVENT `create_next_due_entry` ON SCHEDULE EVER
     DECLARE cur_status INT;
 
     DECLARE new_balance DECIMAL(10,2);
+    DECLARE new_duedate DATETIME;
 
     DECLARE cur CURSOR FOR
         SELECT t.transaction_history_id, t.stall_slots_id, t.balance, t.amount_paid, t.penalty, t.duedate, t.status
@@ -219,18 +224,21 @@ CREATE DEFINER=`root`@`localhost` EVENT `create_next_due_entry` ON SCHEDULE EVER
             LEAVE read_loop;
         END IF;
 
-        -- Proceed if overdue
-        IF cur_duedate < NOW() THEN
+        -- If the due date is overdue, or status is 1 (paid)
+        IF cur_duedate < NOW() OR cur_status = 1 THEN
 
-            -- Update previous status if ongoing
+            -- If status was 2 (ongoing), mark it as 3 (overdue)
             IF cur_status = 2 THEN
                 UPDATE transaction_history
                 SET status = 3
                 WHERE transaction_history_id = cur_trans_id;
             END IF;
 
-            -- Compute balance safely
-            SET new_balance = ((IFNULL(cur_balance,0) + IFNULL(cur_paid,0)) - IFNULL(cur_penalty,0)) + IFNULL(cur_balance,0);
+            -- Compute the new balance safely
+            SET new_balance = ((IFNULL(cur_balance, 0) + IFNULL(cur_paid, 0)) - IFNULL(cur_penalty, 0)) + IFNULL(cur_balance, 0);
+
+            -- Set new due date as 30 days from the previous due date
+            SET new_duedate = DATE_ADD(cur_duedate, INTERVAL 30 DAY);
 
             -- Insert new entry
             INSERT INTO transaction_history (
@@ -245,10 +253,10 @@ CREATE DEFINER=`root`@`localhost` EVENT `create_next_due_entry` ON SCHEDULE EVER
                 cur_stall_id,
                 new_balance,
                 0.00,
-                cur_balance,
-                DATE_ADD(NOW(), INTERVAL 30 DAY),
-                2,
-                NULL
+                cur_balance,  -- the previous balance as the new penalty
+                new_duedate,
+                2,  -- status 2 (ongoing)
+                NULL  -- completed date
             );
         END IF;
 
