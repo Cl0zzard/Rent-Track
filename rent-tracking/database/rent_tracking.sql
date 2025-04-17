@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 16, 2025 at 03:10 PM
+-- Generation Time: Apr 17, 2025 at 02:25 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -74,7 +74,8 @@ CREATE TABLE `stall_slots` (
 INSERT INTO `stall_slots` (`stall_slots_id`, `tenantname`, `monthly`, `email`, `phonenumber`, `location`, `date_added`, `status`, `manager_name`) VALUES
 (26, 'Krispy Kings', 5000.00, 'jpantoja@usa.edu.ph', 2147483647, 1, '2025-04-15', 1, 'Hezekiah'),
 (28, 'Mcdonald', 5000.00, 'jpantoja@usa.edu.ph', 2147483647, 3, '2025-04-15', 1, 'Hezekiah'),
-(29, 'kopi', 5000.00, 'jpantoja@usa', 2147483647, 2, '2025-04-15', 1, 'angelie');
+(29, 'kopi', 5000.00, 'jpantoja@usa', 2147483647, 2, '2025-04-15', 1, 'angelie'),
+(30, 'Admin', 6000.00, 'danielreysoma@gmail.com', 2147483647, 2, '2025-04-17', 1, 'TEster');
 
 -- --------------------------------------------------------
 
@@ -101,7 +102,7 @@ CREATE TABLE `transaction_history` (
   `amount_paid` float(10,2) DEFAULT NULL,
   `penalty` float(10,2) DEFAULT NULL,
   `duedate` date DEFAULT NULL,
-  `status` tinyint(1) DEFAULT NULL COMMENT '1=Complete\r\n2=Incomplete',
+  `status` tinyint(1) DEFAULT NULL COMMENT '1=Complete\r\n2=Incomplete\r\n3=Overdue',
   `completed_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -110,10 +111,10 @@ CREATE TABLE `transaction_history` (
 --
 
 INSERT INTO `transaction_history` (`transaction_history_id`, `stall_slots_id`, `balance`, `amount_paid`, `penalty`, `duedate`, `status`, `completed_date`) VALUES
-(76, 23, 0.00, 1100.00, 100.00, '2025-06-18', 1, '2025-04-14'),
-(77, 24, 0.00, 1200.00, 100.00, '2026-01-15', 1, '2025-04-14'),
-(78, 26, 0.00, 5500.00, 500.00, '2025-04-16', 1, '2025-04-15'),
-(79, 28, 0.00, 5000.00, 0.00, '2025-04-15', 1, '2025-04-15');
+(183, 30, 10.00, NULL, 10.00, '2025-04-19', 2, NULL),
+(184, 26, 905.00, 100.00, 5.00, '2025-04-15', 3, NULL),
+(186, 26, 1405.00, 500.00, 905.00, '2025-04-16', 3, NULL),
+(187, 26, 2405.00, 0.00, 1405.00, '2025-05-17', 2, NULL);
 
 --
 -- Indexes for dumped tables
@@ -158,7 +159,7 @@ ALTER TABLE `admin_account`
 -- AUTO_INCREMENT for table `stall_slots`
 --
 ALTER TABLE `stall_slots`
-  MODIFY `stall_slots_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `stall_slots_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `stall_slots_file`
@@ -170,7 +171,7 @@ ALTER TABLE `stall_slots_file`
 -- AUTO_INCREMENT for table `transaction_history`
 --
 ALTER TABLE `transaction_history`
-  MODIFY `transaction_history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `transaction_history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=188;
 
 --
 -- Constraints for dumped tables
@@ -181,6 +182,83 @@ ALTER TABLE `transaction_history`
 --
 ALTER TABLE `stall_slots_file`
   ADD CONSTRAINT `stall_slots_id` FOREIGN KEY (`stall_slots_id`) REFERENCES `stall_slots` (`stall_slots_id`) ON DELETE CASCADE;
+
+DELIMITER $$
+--
+-- Events
+--
+CREATE DEFINER=`root`@`localhost` EVENT `create_next_due_entry` ON SCHEDULE EVERY 10 SECOND STARTS '2025-04-17 19:37:29' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    DECLARE done INT DEFAULT 0;
+
+    DECLARE cur_stall_id INT;
+    DECLARE cur_trans_id INT;
+    DECLARE cur_balance DECIMAL(10,2);
+    DECLARE cur_paid DECIMAL(10,2);
+    DECLARE cur_penalty DECIMAL(10,2);
+    DECLARE cur_duedate DATETIME;
+    DECLARE cur_status INT;
+
+    DECLARE new_balance DECIMAL(10,2);
+
+    DECLARE cur CURSOR FOR
+        SELECT t.transaction_history_id, t.stall_slots_id, t.balance, t.amount_paid, t.penalty, t.duedate, t.status
+        FROM transaction_history t
+        INNER JOIN (
+            SELECT stall_slots_id, MAX(transaction_history_id) AS max_id
+            FROM transaction_history
+            GROUP BY stall_slots_id
+        ) latest ON t.transaction_history_id = latest.max_id;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO cur_trans_id, cur_stall_id, cur_balance, cur_paid, cur_penalty, cur_duedate, cur_status;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Proceed if overdue
+        IF cur_duedate < NOW() THEN
+
+            -- Update previous status if ongoing
+            IF cur_status = 2 THEN
+                UPDATE transaction_history
+                SET status = 3
+                WHERE transaction_history_id = cur_trans_id;
+            END IF;
+
+            -- Compute balance safely
+            SET new_balance = ((IFNULL(cur_balance,0) + IFNULL(cur_paid,0)) - IFNULL(cur_penalty,0)) + IFNULL(cur_balance,0);
+
+            -- Insert new entry
+            INSERT INTO transaction_history (
+                stall_slots_id, 
+                balance, 
+                amount_paid, 
+                penalty, 
+                duedate, 
+                status, 
+                completed_date
+            ) VALUES (
+                cur_stall_id,
+                new_balance,
+                0.00,
+                cur_balance,
+                DATE_ADD(NOW(), INTERVAL 30 DAY),
+                2,
+                NULL
+            );
+        END IF;
+
+    END LOOP;
+
+    CLOSE cur;
+
+END$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
