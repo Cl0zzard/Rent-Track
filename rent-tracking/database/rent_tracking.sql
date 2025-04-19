@@ -60,13 +60,13 @@ CREATE TABLE `stall_slots` (
   `tenantname` varchar(150) DEFAULT NULL,
   `monthly` float(10,2) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
-  `phonenumber` int(11) DEFAULT NULL,
+  `phonenumber` varchar(20) DEFAULT NULL,
   `location` tinyint(1) DEFAULT NULL COMMENT '1=USA BED Campus\r\n2=USA Main Campus Permanent\r\n3=USA Main Kiosks',
   `date_added` date DEFAULT current_timestamp(),
   `status` int(1) DEFAULT 1 COMMENT '1=unarchived\r\n2= archived',
   `manager_name` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`stall_slots_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,7 +75,7 @@ CREATE TABLE `stall_slots` (
 
 LOCK TABLES `stall_slots` WRITE;
 /*!40000 ALTER TABLE `stall_slots` DISABLE KEYS */;
-INSERT INTO `stall_slots` VALUES (26,'Krispy Kings',5000.00,'jpantoja@usa.edu.ph',2147483647,1,'2025-04-15',1,'Hezekiah'),(28,'Mcdonald',5000.00,'jpantoja@usa.edu.ph',2147483647,3,'2025-04-15',1,'Hezekiah'),(29,'kopi',5000.00,'jpantoja@usa',2147483647,2,'2025-04-15',1,'angelie'),(30,'Admin',6000.00,'danielreysoma@gmail.com',2147483647,2,'2025-04-17',1,'TEster'),(31,'test 2',5000.00,'dannylreyes32@gmail.com',2147483647,3,'2025-04-18',1,'Daniel'),(33,'Tester 3',10000.00,'dannylreyes32@gmail.com',2147483647,3,'2025-04-18',1,'Lorem Ipsum');
+INSERT INTO `stall_slots` VALUES (26,'Krispy Kings',5000.00,'jpantoja@usa.edu.ph','2147483647',1,'2025-04-15',1,'Hezekiah'),(28,'Mcdonald',5000.00,'jpantoja@usa.edu.ph','2147483647',3,'2025-04-15',1,'Hezekiah'),(29,'kopi',5000.00,'jpantoja@usa','2147483647',2,'2025-04-15',1,'angelie'),(30,'Admin',6000.00,'danielreysoma@gmail.com','09667332990',2,'2025-04-17',1,'TEster'),(31,'test 2',5000.00,'dannylreyes32@gmail.com','2147483647',3,'2025-04-18',2,'Daniel'),(33,'Tester 3',10000.00,'dannylreyes32@gmail.com','2147483647',3,'2025-04-18',1,'Lorem Ipsum'),(34,'Tester 4',25000.00,'dannylreyes32@gmail.com','09667332990',1,'2025-04-19',1,'Lorem Ipsum');
 /*!40000 ALTER TABLE `stall_slots` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -134,7 +134,7 @@ CREATE TABLE `stall_slots_file` (
   PRIMARY KEY (`stall_slots_file_id`),
   KEY `stall_slots_id` (`stall_slots_id`),
   CONSTRAINT `stall_slots_id` FOREIGN KEY (`stall_slots_id`) REFERENCES `stall_slots` (`stall_slots_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,6 +143,7 @@ CREATE TABLE `stall_slots_file` (
 
 LOCK TABLES `stall_slots_file` WRITE;
 /*!40000 ALTER TABLE `stall_slots_file` DISABLE KEYS */;
+INSERT INTO `stall_slots_file` VALUES (31,26,'Krispy_Kings_rent_tracking.sql'),(32,26,'Krispy_Kings_icons8-youtube.svg');
 /*!40000 ALTER TABLE `stall_slots_file` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,7 +164,7 @@ CREATE TABLE `transaction_history` (
   `status` tinyint(1) DEFAULT NULL COMMENT '1=Complete\r\n2=Incomplete\r\n3=Overdue',
   `completed_date` date DEFAULT NULL,
   PRIMARY KEY (`transaction_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=224 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +173,7 @@ CREATE TABLE `transaction_history` (
 
 LOCK TABLES `transaction_history` WRITE;
 /*!40000 ALTER TABLE `transaction_history` DISABLE KEYS */;
-INSERT INTO `transaction_history` VALUES (197,30,1000.00,NULL,0.00,'2025-03-16',3,NULL),(198,30,1500.00,500.00,1000.00,'2025-04-16',3,NULL),(199,30,0.00,2500.00,1500.00,'2025-05-16',1,'2025-04-17'),(200,30,1000.00,0.00,0.00,'2025-06-15',2,NULL),(211,31,5000.00,NULL,0.00,'2025-04-17',3,NULL),(216,26,6000.00,NULL,0.00,'2025-04-26',2,NULL),(218,31,10100.00,0.00,5100.00,'2025-05-17',2,NULL),(219,31,0.00,NULL,0.00,'2025-04-17',3,NULL),(220,31,5150.00,0.00,150.00,'2025-05-17',2,NULL),(221,32,0.00,0.00,0.00,'2025-05-18',2,NULL),(222,33,10000.00,0.00,0.00,'2025-04-16',3,NULL),(223,33,20200.00,0.00,10200.00,'2025-05-16',2,NULL);
+INSERT INTO `transaction_history` VALUES (265,34,25000.00,NULL,0.00,'2024-01-19',3,NULL),(266,34,0.00,0.00,25500.00,'2024-02-18',1,NULL),(267,34,0.00,0.00,51000.00,'2024-03-19',1,NULL),(268,34,0.00,101500.00,76500.00,'2024-04-19',1,'2025-04-19'),(276,34,0.00,25000.00,0.00,'2024-05-19',1,'2025-04-19'),(278,34,25000.00,0.00,0.00,'2024-06-18',3,NULL),(279,34,50500.00,0.00,25500.00,'2024-07-18',3,NULL),(280,34,76000.00,0.00,51000.00,'2024-08-17',3,NULL),(281,34,101500.00,0.00,76500.00,'2024-09-16',3,NULL),(282,34,127000.00,0.00,102000.00,'2024-10-16',3,NULL),(283,34,152500.00,0.00,127500.00,'2024-11-15',3,NULL),(284,34,178000.00,0.00,153000.00,'2024-12-15',3,NULL),(285,34,203500.00,0.00,178500.00,'2025-01-14',3,NULL),(286,34,229000.00,0.00,204000.00,'2025-02-13',3,NULL),(287,34,254500.00,0.00,229500.00,'2025-03-15',3,NULL),(288,34,280000.00,0.00,255000.00,'2025-04-14',3,NULL),(289,34,305500.00,0.00,280500.00,'2025-05-14',2,NULL);
 /*!40000 ALTER TABLE `transaction_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -192,7 +193,7 @@ DELIMITER ;;
 /*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;;
 /*!50003 SET @saved_time_zone      = @@time_zone */ ;;
 /*!50003 SET time_zone             = 'SYSTEM' */ ;;
-/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `create_next_due_entry` ON SCHEDULE EVERY 10 SECOND STARTS '2025-04-18 16:55:45' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `create_next_due_entry` ON SCHEDULE EVERY 10 SECOND STARTS '2025-04-19 17:05:12' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
     DECLARE done INT DEFAULT 0;
 
     DECLARE cur_stall_id INT;
@@ -207,6 +208,7 @@ DELIMITER ;;
     DECLARE computed_penalty DECIMAL(10,2);
     DECLARE new_balance DECIMAL(10,2);
     DECLARE new_duedate DATETIME;
+    DECLARE new_status INT;
 
     DECLARE cur CURSOR FOR
         SELECT t.transaction_history_id, t.stall_slots_id, t.balance, t.amount_paid, t.penalty, t.duedate, t.status
@@ -229,29 +231,31 @@ DELIMITER ;;
             LEAVE read_loop;
         END IF;
 
-        -- Check if due OR status is 1 (paid)
-        IF cur_duedate < NOW() OR cur_status = 1 THEN
+        -- Get monthly rent
+        SELECT monthly INTO monthly_rent FROM stall_slots WHERE stall_slots_id = cur_stall_id;
 
-            -- Update ongoing (2) to overdue (3)
-            IF cur_status = 2 THEN
-                UPDATE transaction_history
-                SET status = 3
-                WHERE transaction_history_id = cur_trans_id;
-            END IF;
-
-            -- Get monthly rent
-            SELECT monthly INTO monthly_rent FROM stall_slots WHERE stall_slots_id = cur_stall_id;
-
-            -- Calculate penalty: 2% of monthly + previous balance
+        -- Calculate penalty only if overdue
+        IF cur_status = 3 THEN
             SET computed_penalty = (0.02 * IFNULL(monthly_rent, 0)) + IFNULL(cur_balance, 0);
+        ELSE
+            SET computed_penalty = 0.00;
+        END IF;
 
-            -- Calculate new balance: monthly + penalty
-            SET new_balance = IFNULL(monthly_rent, 0) + computed_penalty;
+        -- Calculate new balance: monthly rent + penalty (if overdue)
+        SET new_balance = IFNULL(monthly_rent, 0) + computed_penalty;
 
-            -- Set new due date 30 days from the previous due date
-            SET new_duedate = DATE_ADD(cur_duedate, INTERVAL 30 DAY);
+        -- Set new due date: 30 days from the previous due date
+        SET new_duedate = DATE_ADD(cur_duedate, INTERVAL 30 DAY);
 
-            -- Insert new transaction
+        -- Determine status for the new transaction based on the new due date
+        IF new_duedate < NOW() THEN
+            SET new_status = 3;  -- Overdue if the new due date is in the past
+        ELSE
+            SET new_status = 2;  -- Ongoing if the new due date is in the future
+        END IF;
+
+        -- Insert a new transaction only if the bill is paid or overdue
+        IF cur_status IN (1, 3) THEN
             INSERT INTO transaction_history (
                 stall_slots_id, 
                 balance, 
@@ -266,7 +270,7 @@ DELIMITER ;;
                 0.00,
                 computed_penalty,
                 new_duedate,
-                2,  -- status ongoing
+                new_status,  -- Status is dynamically set to 2 or 3 based on due date
                 NULL
             );
         END IF;
@@ -297,4 +301,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-18 17:11:16
+-- Dump completed on 2025-04-19 17:24:14
