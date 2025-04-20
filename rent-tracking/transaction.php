@@ -110,7 +110,7 @@ if ($rows) {
               <div class="d-none d-lg-flex align-items-center gap-2">
                 <a target="_blank" href="transaction-print.php?stall_slots_id=<?= $get_stall_slots_id ?>"
                   class=" btn btn-sm btn-secondary rounded-1 py-2">
-                  <i class="fa-solid fa-print me-2"></i><span>Prints</span>
+                  <i class="fa-solid fa-print me-2"></i><span>Print</span>
                 </a>
                 <a type="button" class="create_transaction btn btn-sm btn-primary rounded-1 py-2">
                   <i class="fa-solid fa-circle-plus me-2"></i><span>Create Transaction</span>
