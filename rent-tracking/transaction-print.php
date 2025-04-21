@@ -10,16 +10,24 @@ include "connect.php";
 
 $get_stall_slots_id = $_GET['stall_slots_id'] ?? null;
 $sql = "SELECT
-         ss.*, 
-         SUM(th.amount_paid) AS total_payments, 
-         SUM(th.penalty) AS total_penaltys, 
-         SUM(th.balance) AS total_balances
-        FROM stall_slots ss
-        LEFT JOIN transaction_history th ON th.stall_slots_id = ss.stall_slots_id
-        WHERE ss.stall_slots_id = :stall_slots_id";
+  ss.*,
+  (
+    SELECT th.balance 
+    FROM transaction_history th 
+    WHERE th.stall_slots_id = ss.stall_slots_id 
+    ORDER BY th.duedate DESC 
+    LIMIT 1
+  ) AS total_balances,
+  SUM(th.amount_paid) AS total_payments,
+  SUM(CASE WHEN th.status != 3 THEN th.balance + th.amount_paid ELSE 0 END) AS total_costs
+FROM stall_slots ss
+LEFT JOIN transaction_history th ON ss.stall_slots_id = th.stall_slots_id
+WHERE ss.stall_slots_id = ?
+GROUP BY ss.stall_slots_id
+";
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(":stall_slots_id", $get_stall_slots_id);
-$stmt->execute();
+$stmt->execute([$get_stall_slots_id]);
 $rows = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($rows) {
@@ -29,7 +37,7 @@ if ($rows) {
   $phonenumber = $rows['phonenumber'];
   $manager_name = $rows['manager_name'];
   $total_payments = $rows['total_payments'];
-  $total_penaltys = $rows['total_penaltys'];
+  $total_costs = $rows['total_costs'];
   $total_balances = $rows['total_balances'];
 
   switch ($location) {
@@ -104,9 +112,13 @@ if ($rows) {
     <hr class="mt-3 mb-0 text-danger border-2 border-black">
     <div class="row mx-0 mt-3 mb-2">
       <h4 class="col-12 text-center mb-3">Budget Summary</h4>
-      <div class="col-4">Total Payment: ₱ <?= ($total_payments != null) ? $total_payments . '.00' : 0; ?></div>
-      <div class="col-4">Total Penalty: ₱ <?= ($total_penaltys != null) ? $total_penaltys . '.00' : 0; ?></div>
-      <div class="col-4">Total Balance Due: ₱ <?= ($total_balances != null) ? $total_balances . '.00' : 0; ?></div>
+      <div class="col-4">Total Cost: ₱ <?= ($total_costs != null) ? number_format($total_costs, 2) : '0.00'; ?>
+      </div>
+      <div class="col-4">Total Payment: ₱ <?= ($total_payments != null) ? number_format($total_payments, 2) : '0.00'; ?>
+      </div>
+      <div class="col-4">Remaining Due: ₱
+        <?= ($total_balances != null) ? number_format($total_balances, 2) : '0.00'; ?>
+      </div>
     </div>
     <table class="table mt-3">
       <thead class="position-sticky top-0">

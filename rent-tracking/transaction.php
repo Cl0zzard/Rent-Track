@@ -152,7 +152,7 @@ if ($rows) {
                     <th>Location</th>
                     <th>Balance</th>
                     <th>Amount Paid</th>
-                    <th>Penalty</th>
+                    <th>Outstanding + Penalty(2%)</th>
                     <th>Due Date</th>
                     <th>Status</th>
                     <th>Action</th>
