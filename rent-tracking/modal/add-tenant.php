@@ -97,8 +97,28 @@
 	const form = document.querySelector('form');
 	const submitButton = document.getElementById('addtenant');
 
+	const emailRegex = /^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|icloud\.com)$/;
+	const phoneRegex = /^[0-9]{11}$/;
+
+
+
 	form.addEventListener('submit', function (e) {
-		// Show loader on submit
+		const emailInput = document.getElementById('email').value.trim();
+		const phone = document.getElementById('phonenumber').value.trim();
+
+		if (!emailRegex.test(emailInput)) {
+			e.preventDefault(); // stop the form from submitting
+			alert("Please enter a valid email address. Only Gmail, Yahoo, Outlook, Hotmail, or iCloud email addresses are allowed.");
+			return;
+		}
+
+		if (!phoneRegex.test(phone)) {
+			alert("Phone number must be 11 digits.");
+			e.preventDefault();
+			return;
+		}
+
+		// Passed validation — show loading state
 		submitButton.innerHTML = 'Saving... <i class="fas fa-spinner fa-spin"></i>';
 		submitButton.disabled = true;
 	});

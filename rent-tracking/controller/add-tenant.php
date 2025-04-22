@@ -18,22 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $url = "../stall-slots";
     $alert = "<script>window.history.back();</script>";  // Go back to the previous page when alert is closed
 
-    // Regex for email validation with common domains
-    $emailRegex = '/^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|icloud\.com)$/';
-    if (!preg_match($emailRegex, $email)) {
-        echo "<script>alert('Invalid email format or unsupported email provider!');</script>";
-        echo $alert;
-        exit();
-    }
-
-    // Regex for phone number validation (example: only digits, length between 10 and 15)
-    $phoneRegex = '/^\d{10,15}$/';
-    if (!preg_match($phoneRegex, $phonenumber)) {
-        echo "<script>alert('Invalid phone number format!');</script>";
-        echo $alert;
-        exit();
-    }
-
     $confirmation_token = bin2hex(random_bytes(16)); // Generate a unique token
 
     // If there's a stall_slots_id, update the record
