@@ -97,7 +97,7 @@
 	const form = document.querySelector('form');
 	const submitButton = document.getElementById('addtenant');
 
-	const emailRegex = /^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|icloud\.com)$/;
+	const emailRegex = /^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|icloud\.com|usa\.edu\.ph)$/;
 	const phoneRegex = /^[0-9]{11}$/;
 
 

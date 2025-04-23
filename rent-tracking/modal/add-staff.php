@@ -63,7 +63,7 @@
 		const phone = document.getElementById('phonenumber').value.trim();
 
 		// Regex patterns
-		const emailRegex = /^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|icloud\.com)$/;
+		const emailRegex = /^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|icloud\.com|usa\.edu\.ph)$/;
 		const phoneRegex = /^[0-9]{11}$/; // Example: Philippine mobile format
 
 		// Validation checks
