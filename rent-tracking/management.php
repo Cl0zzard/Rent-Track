@@ -150,7 +150,7 @@ include 'connect.php';
                     <th>Username</th>
                     <th>Phone No.</th>
                     <th>Address</th>
-                    <th>Date Added</th>
+                    <th><?= ($_GET['account_status'] == 1) ? 'Date Added' : 'Date Archived' ?></th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -193,7 +193,9 @@ include 'connect.php';
                       foreach ($row as $key => $value):
                         $$key = $value;
                       endforeach;
-                      $formatdate = date("F j, Y", strtotime($date_added));
+                      $formatdate = ($_GET['account_status'] == 1 && !empty($date_added))
+                        ? date("F j, Y", strtotime($date_added))
+                        : (!empty($date_archived) ? date("F j, Y", strtotime($date_archived)) : 'N/A');
                       ?>
                       <tr data-id="2">
                         <td data-label="#" width="50"><?= $index++; ?></td>

@@ -11,12 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         if ($type == 2) {
             $url = "../stall-slots";
-        }else{
+        } else {
             $url = "../archived-history";
         }
-        $alert = "<script>window.location.href = '".$url."';</script>";
+        $alert = "<script>window.location.href = '" . $url . "';</script>";
 
-        $sqlUpdate = "UPDATE stall_slots SET status = :type WHERE stall_slots_id = :stall_slots_id";
+        $sqlUpdate = "UPDATE stall_slots 
+        SET status = :type, 
+            date_archived = CURDATE() 
+        WHERE stall_slots_id = :stall_slots_id";
+
         $updateQuery = $conn->prepare($sqlUpdate);
         $updateQuery->bindParam(':type', $type);
         $updateQuery->bindParam(':stall_slots_id', $stall_slots_id);
@@ -24,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if ($updateQuery->execute()) {
             if ($type == 2) {
                 echo "<script>alert('Stall Archived Successfully!');</script>";
-            }else{
+            } else {
                 echo "<script>alert('Stall Unarchived Successfully!');</script>";
             }
             echo $alert;

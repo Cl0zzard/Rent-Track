@@ -11,12 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         if ($type == 2) {
             $url = "../management?account_status=2";
-        }else{
+        } else {
             $url = "../management?account_status=1";
         }
-        $alert = "<script>window.location.href = '".$url."';</script>";
+        $alert = "<script>window.location.href = '" . $url . "';</script>";
 
-        $sqlUpdate = "UPDATE admin_account SET status_archived = :type WHERE admin_id = :admin_id";
+        $sqlUpdate = "UPDATE admin_account SET status_archived = :type, date_archived = CURDATE()  WHERE admin_id = :admin_id";
         $updateQuery = $conn->prepare($sqlUpdate);
         $updateQuery->bindParam(':type', $type);
         $updateQuery->bindParam(':admin_id', $admin_id);
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         if ($updateQuery->execute()) {
             if ($type == 2) {
                 echo "<script>alert('Staff Archived Successfully!');</script>";
-            }else{
+            } else {
                 echo "<script>alert('Staff Unarchived Successfully!');</script>";
             }
             echo $alert;

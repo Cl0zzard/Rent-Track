@@ -130,7 +130,7 @@ include 'connect.php';
                     <th>Phone No.</th>
                     <th>Monthly</th>
                     <th>Location</th>
-                    <th>Date Added</th>
+                    <th>Date Archived</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -183,7 +183,7 @@ include 'connect.php';
                           $location_txt = 'USA Main Kiosks';
                           break;
                       }
-                      $formatdate = date("F j, Y", strtotime($date_added));
+                      $formatdate = date("F j, Y", strtotime($date_archived));
                       ?>
                       <tr data-id="2">
                         <td data-label="#" width="50"><?= $index++; ?></td>
