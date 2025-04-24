@@ -101,22 +101,24 @@ include 'connect.php';
             </div>
             <div>
               <div class="mt-3 d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-2">
-                  <label for="categories">Show: </label>
-                  <select required name="categories" id="table_show" class="form-select form-select-sm rounded-1 py-2">
-                    <option value="" selected hidden>10</option>
-                    <option value="all">All</option>
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </div>
-                <div>
-                  <input type="text" id="search-bar" class="form-control form-control-sm rounded-1 py-2"
-                    placeholder="Search here">
-                </div>
-
+                <form method="get" id="show-form">
+                  <input type="hidden" name="stall_slots_id"
+                    value="<?= htmlspecialchars($_GET['stall_slots_id'] ?? '') ?>">
+                  <div class="d-flex align-items-center gap-2">
+                    <label for="table_show">Show: </label>
+                    <select name="limit" id="table_show" class="form-select form-select-sm rounded-1 py-2"
+                      onchange="document.getElementById('show-form').submit()">
+                      <option value="10" <?= (!isset($_GET['limit']) || $_GET['limit'] == '10') ? 'selected' : '' ?>>10
+                      </option>
+                      <option value="25" <?= (isset($_GET['limit']) && $_GET['limit'] == '25') ? 'selected' : '' ?>>25
+                      </option>
+                      <option value="50" <?= (isset($_GET['limit']) && $_GET['limit'] == '50') ? 'selected' : '' ?>>50
+                      </option>
+                      <option value="100" <?= (isset($_GET['limit']) && $_GET['limit'] == '100') ? 'selected' : '' ?>>100
+                      </option>
+                    </select>
+                  </div>
+                </form>
               </div>
             </div>
 
@@ -138,17 +140,38 @@ include 'connect.php';
                 </thead>
                 <tbody>
                   <?php
-                  $index = 1;
+                  // Get selected pagination value
+                  $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+                  $page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+                  if (!is_numeric($limit)) {
+                    if ($limit === 'all') {
+                      $useLimit = false;
+                    } else {
+                      $limit = 10;
+                      $useLimit = true;
+                    }
+                  } else {
+                    $limit = (int) $limit;
+                    $useLimit = true;
+                  }
+
+                  $page = is_numeric($page) ? (int) $page : 1;
+                  $offset = ($page - 1) * $limit;
+
                   $sql = "SELECT *
-                                  FROM stall_slots
-                                  WHERE status = 1";
+                          FROM stall_slots
+                          WHERE status = 1
+                          LIMIT :limit OFFSET :offset";
                   $stmt = $conn->prepare($sql);
+                  $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+                  $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
                   $stmt->execute();
                   $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                   if ($rows) {
+                    $index = 1 + $offset;
                     foreach ($rows as $row):
-
                       foreach ($row as $key => $value):
                         $$key = $value;
                       endforeach;
@@ -232,32 +255,69 @@ include 'connect.php';
                             </small>
                             <small class="archive_button py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
                               role="button" data-id="<?= $stall_slots_id; ?>" data-type="2">
-                              <i class="fa-solid fa-box-archive me-2 "></i><span class="">Archive</span>
+                              <i class="fa-solid fa-trash me-2"></i><span>Archive</span>
                             </small>
                           </div>
                         </td>
                       </tr>
                     <?php endforeach;
                   } else { ?>
-                    <tr class="remove-row">
-                      <td colspan="100" class="text-center">No Data Added</td>
+                    <tr>
+                      <td colspan="10" class="text-center">No stall slots found</td>
                     </tr>
-                  <?php } ?>
+                  <?php }
+                  ?>
                 </tbody>
               </table>
-            </div>
 
+
+
+            </div>
+            <!-- Pagination Controls -->
+            <?php
+            // Total rows in the 'stall_slots' table with status 1
+            $count_sql = "SELECT COUNT(*) FROM stall_slots WHERE status = 1";
+            $count_stmt = $conn->prepare($count_sql);
+            $count_stmt->execute();
+            $total_rows = $count_stmt->fetchColumn();
+
+            // Pagination logic
+            $total_pages = ceil($total_rows / $limit);
+            if ($total_pages > 1): ?>
+              <nav class="mt-3">
+                <ul class="pagination justify-content-center">
+                  <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                      <a class="page-link"
+                        href="?stall_slots_id=<?= htmlspecialchars($stall_slots_id) ?>&limit=<?= $limit ?>&page=<?= $i ?>">
+                        <?= $i ?>
+                      </a>
+                    </li>
+                  <?php endfor; ?>
+                </ul>
+              </nav>
+            <?php endif; ?>
           </div>
         </div>
       </div>
-
-
     </div>
-    <!-- content container end-->
+    <!-- content container end -->
   </div>
   <?php include 'modal/add-tenant.php' ?>
   <?php include "plugins-footer.php"; ?>
   <script type="text/javascript">
+    $(document).ready(function () {
+      // Handle changes to the number of entries shown
+      $('#table_show').change(function () {
+        const limit = $(this).val();
+        const currentPage = new URLSearchParams(window.location.search).get('page') || 1; // Get the current page from URL or default to 1
+        const stallSlotsId = $('input[name="stall_slots_id"]').val(); // Get the stall_slots_id value
+
+        // Redirect to the correct URL including the stall_slots_id and the current page
+        window.location.href = `?stall_slots_id=${stallSlotsId}&limit=${limit}&page=${currentPage}`;
+      });
+    });
+
     $(document).ready(function () {
 
       $('.upload_file').click(function (e) {

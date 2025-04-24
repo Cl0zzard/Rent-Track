@@ -125,17 +125,24 @@ if ($rows) {
             </div>
             <div>
               <div class="mt-3 d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-2">
-                  <label for="categories">Show: </label>
-                  <select required name="categories" id="table_show" class="form-select form-select-sm rounded-1 py-2">
-                    <option value="" selected hidden>10</option>
-                    <option value="all">All</option>
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </div>
+                <form method="get" id="show-form">
+                  <input type="hidden" name="stall_slots_id"
+                    value="<?= htmlspecialchars($_GET['stall_slots_id'] ?? '') ?>">
+                  <div class="d-flex align-items-center gap-2">
+                    <label for="table_show">Show: </label>
+                    <select name="limit" id="table_show" class="form-select form-select-sm rounded-1 py-2"
+                      onchange="document.getElementById('show-form').submit()">
+                      <option value="10" <?= (!isset($_GET['limit']) || $_GET['limit'] == '10') ? 'selected' : '' ?>>10
+                      </option>
+                      <option value="25" <?= (isset($_GET['limit']) && $_GET['limit'] == '25') ? 'selected' : '' ?>>25
+                      </option>
+                      <option value="50" <?= (isset($_GET['limit']) && $_GET['limit'] == '50') ? 'selected' : '' ?>>50
+                      </option>
+                      <option value="100" <?= (isset($_GET['limit']) && $_GET['limit'] == '100') ? 'selected' : '' ?>>100
+                      </option>
+                    </select>
+                  </div>
+                </form>
                 <div>
                   <input type="text" id="search-bar" class="form-control form-control-sm rounded-1 py-2"
                     placeholder="Search here">
@@ -161,21 +168,44 @@ if ($rows) {
                 <tbody>
 
                   <?php
+                  // Get selected pagination value
+                  $limit = isset($_GET['limit']) ? $_GET['limit'] : 10;
+                  $page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-                  $index = 1;
+                  if (!is_numeric($limit)) {
+                    if ($limit === 'all') {
+                      $useLimit = false;
+                    } else {
+                      $limit = 10;
+                      $useLimit = true;
+                    }
+                  } else {
+                    $limit = (int) $limit;
+                    $useLimit = true;
+                  }
+
+                  $page = is_numeric($page) ? (int) $page : 1;
+                  $offset = ($page - 1) * $limit;
+
+
+
+                  // SQL query to get data with limit and offset
                   $sql = "SELECT *, th.status as th_status
-                                  FROM transaction_history th
-                                  INNER JOIN stall_slots ss 
-                                  ON ss.stall_slots_id = th.stall_slots_id
-                                  WHERE th.stall_slots_id = :stall_slots_id";
+              FROM transaction_history th
+              INNER JOIN stall_slots ss 
+              ON ss.stall_slots_id = th.stall_slots_id
+              WHERE th.stall_slots_id = :stall_slots_id
+              LIMIT :limit OFFSET :offset";
                   $stmt = $conn->prepare($sql);
                   $stmt->bindParam(":stall_slots_id", $get_stall_slots_id);
+                  $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
+                  $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
                   $stmt->execute();
                   $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                   if ($rows) {
+                    $index = 1 + $offset; // Adjust the index based on the offset
                     foreach ($rows as $row):
-
                       foreach ($row as $key => $value):
                         $$key = $value;
                       endforeach;
@@ -207,26 +237,14 @@ if ($rows) {
 
                       <tr data-id="2">
                         <td data-label="#" width="50"><?= $index++; ?></td>
-                        <td data-label="Location">
-                          <?= $location_txt ?>
-                        </td>
-                        <td data-label="Balance">
-                          ₱
-                          <?= $balance != null ? number_format($balance, 2) : '0.00'; ?>
-                        </td>
-                        <td data-label="Amount Paid">
-                          ₱
+                        <td data-label="Location"><?= $location_txt ?></td>
+                        <td data-label="Balance">₱ <?= $balance != null ? number_format($balance, 2) : '0.00'; ?></td>
+                        <td data-label="Amount Paid">₱
                           <?= $amount_paid != null ? number_format($amount_paid, 2) : '0.00'; ?>
                         </td>
-                        <td data-label="Penalty">
-                          ₱
-                          <?= $penalty != null ? number_format($penalty, 2) : '0.00'; ?>
-                        </td>
-                        <td data-label="Due Date">
-                          <?= $duedate != null ? $formatdate : 'Incomplete'; ?>
-                        </td>
+                        <td data-label="Penalty">₱ <?= $penalty != null ? number_format($penalty, 2) : '0.00'; ?></td>
+                        <td data-label="Due Date"><?= $duedate != null ? $formatdate : 'Incomplete'; ?></td>
                         <td data-label="Status">
-
                           <span class="badge <?= $status != null ? $badge_bg : 'text-bg-danger'; ?>">
                             <?= $status != null ? $status_txt : 'no due date'; ?>
                           </span>
@@ -234,10 +252,8 @@ if ($rows) {
                         <td data-label="Action" width="160">
                           <div class="d-flex align-items-center column-gap-3">
                             <small>
-
-
                               <a type="button" target="_blank" class="pay_btn py-1 px-2 rounded-1 text-bg-success text-decoration-none d-flex align-items-center 
-             <?php echo ($th_status == 1 || $th_status == 3) ? 'disabled opacity-50' : ''; ?>"
+                    <?php echo ($th_status == 1 || $th_status == 3) ? 'disabled opacity-50' : ''; ?>"
                                 href="javascript:void(0);"
                                 data-data1="<?= $transaction_history_id ? $transaction_history_id : null; ?>"
                                 data-data2="<?= $duedate; ?>" <?php echo ($th_status == 1 || $th_status == 3) ? 'style="pointer-events: none;"' : ''; ?>>
@@ -272,14 +288,42 @@ if ($rows) {
                 </tbody>
               </table>
             </div>
+            <!-- Pagination Controls -->
+            <?php
+            // Count total rows
+            $count_sql = "SELECT COUNT(*) FROM transaction_history WHERE stall_slots_id = :stall_slots_id";
+            $count_stmt = $conn->prepare($count_sql);
+            $count_stmt->bindParam(":stall_slots_id", $get_stall_slots_id);
+            $count_stmt->execute();
+            $total_rows = $count_stmt->fetchColumn();
 
+            // Only show pagination if not "all"
+            if ($useLimit && $limit > 0):
+              $total_pages = ceil($total_rows / $limit);
+              if ($total_pages > 1): ?>
+                <nav class="mt-3">
+                  <ul class="pagination justify-content-center">
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                      <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+                        <a class="page-link"
+                          href="?stall_slots_id=<?= $get_stall_slots_id ?>&limit=<?= $limit ?>&page=<?= $i ?>">
+                          <?= $i ?>
+                        </a>
+                      </li>
+                    <?php endfor; ?>
+                  </ul>
+                </nav>
+              <?php endif;
+            endif;
+            ?>
           </div>
         </div>
       </div>
-
-
     </div>
-    <!-- content container end-->
+
+
+  </div>
+  <!-- content container end-->
   </div>
 
   <?php include 'modal/pay.php' ?>
@@ -287,14 +331,25 @@ if ($rows) {
   <?php include "plugins-footer.php"; ?>
   <script type="text/javascript">
     $(document).ready(function () {
+      // Handle changes to the number of entries shown
+      $(document).ready(function () {
+        $('#table_show').change(function () {
+          const limit = $(this).val();
+          const currentPage = 1; // Reset to page 1 when changing the limit
+          const stallSlotsId = $('input[name="stall_slots_id"]').val(); // Get the stall_slots_id value
+
+          // Redirect to the correct URL including the stall_slots_id
+          window.location.href = `?stall_slots_id=${stallSlotsId}&limit=${limit}&page=${currentPage}`;
+        });
+      });
+
+
+      // Other JavaScript functionalities
       $('#payment-form').submit(function (e) {
         e.preventDefault();
-
         $('#loader-div').removeClass('d-none');
         $('#pay-modal').modal('hide');
-
         const formData = $(this).serialize();
-
         $.ajax({
           url: "controller/create-transaction.php",
           method: "POST",
@@ -302,11 +357,9 @@ if ($rows) {
           dataType: "json",
           success: function (response) {
             $('#loader-div').addClass('d-none');
-
             if (response && response.length > 0) {
               var statusSent = response[0].status_sent;
               var tenant = response[0].tenant;
-
               if (statusSent === "no_overdue") {
                 Swal.fire({
                   title: "Error To Update",
@@ -318,7 +371,7 @@ if ($rows) {
                   text: "Successfully sent to " + tenant,
                   icon: "success"
                 }).then(() => {
-                  location.reload(); // Reloads the page after clicking OK
+                  location.reload();
                 });
               } else if (statusSent === "failed") {
                 Swal.fire({
@@ -326,27 +379,16 @@ if ($rows) {
                   icon: "info"
                 });
               }
-
             } else {
               console.error('Invalid response format:', response);
             }
-
-            console.log(response);
           },
           error: function (xhr, status, error) {
             console.error("AJAX Error: ", error);
-            Swal.fire({
-              title: "Error",
-              text: "Something went wrong. Please try again.",
-              icon: "error"
-            });
           }
         });
-
-
       });
     });
-
   </script>
 </body>
 
