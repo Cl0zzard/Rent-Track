@@ -94,9 +94,16 @@ include 'connect.php';
                 <a type="button" class="notification-btn btn btn-sm btn-warning rounded-1 py-2">
                   <i class="fas fa-bell me-2"></i><span>Notify Due Date</span>
                 </a>
-                <a type="button" class="add_tenant btn btn-sm btn-primary rounded-1 py-2">
-                  <i class="fa-solid fa-circle-plus me-2"></i><span>Add Tenant</span>
-                </a>
+                <?php
+                if ($_SESSION['admin']['role'] === 1) {
+                  ?>
+                  <a type="button" class="add_tenant btn btn-sm btn-primary rounded-1 py-2">
+                    <i class="fa-solid fa-circle-plus me-2"></i><span>Add Tenant</span>
+                  </a>
+
+                  <?php
+                }
+                ?>
               </div>
             </div>
             <div>
@@ -122,7 +129,7 @@ include 'connect.php';
               </div>
             </div>
 
-            <div style="height: auto;">
+            <div style="height: auto; width: 100%; overflow-x: auto;">
               <table id="product_table" class="table table-bordered table-striped">
                 <thead class="position-sticky top-0">
                   <tr class="py-5">
@@ -134,6 +141,8 @@ include 'connect.php';
                     <th>Monthly</th>
                     <th>Location</th>
                     <th>Date Added</th>
+                    <th>Last Edited</th>
+                    <th>Edited By</th>
                     <th>File</th>
                     <th>Action</th>
                   </tr>
@@ -201,7 +210,9 @@ include 'connect.php';
                         </td>
                         <td data-label="Location"><?= $location_txt; ?></td>
                         <td data-label="Date Added"><?= $formatdate; ?></td>
-                        <td data-label="File">
+                        <td data-label="Last Edited"><?= $email; ?></td>
+                        <td data-label="Edited by"><?= $email; ?></td>
+                        <td data-label="File" style="min-width: 120px; max-width: 250px; word-break: break-word;">
                           <?php
                           $sql2 = "SELECT *
                                         FROM stall_slots_file
@@ -230,15 +241,15 @@ include 'connect.php';
                           ?>
                         </td>
                         <td data-label="Action" width="160">
-                          <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
-
+                          <div
+                            class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 flex-wrap">
                             <small data-id="<?= $stall_slots_id; ?>" role="button"
                               class="upload_file py-1 px-2 rounded-1 text-bg-secondary text-decoration-none d-flex align-items-center">
                               <i class="fa-solid fa-upload me-2"></i><span>Upload</span>
                             </small>
                             <small>
                               <a type="button" target="_blank" class="edit_category py-1 px-2 rounded-1 text-bg-warning text-decoration-none d-flex align-items-center 
-    <?php echo ($confirmed == 0) ? 'disabled opacity-50' : ''; ?>"
+                            <?php echo ($confirmed == 0) ? 'disabled opacity-50' : ''; ?>"
                                 href="transaction?stall_slots_id=<?= $stall_slots_id; ?>" <?php echo ($confirmed == 0) ? 'style="pointer-events: none;"' : ''; ?>>
                                 <i class="fa-solid fa-wallet me-2"></i><span>Transactions</span>
                               </a>
@@ -253,10 +264,16 @@ include 'connect.php';
                                 <i class="fa-solid fa-pen-to-square me-2 "></i><span class="">Edit</span>
                               </a>
                             </small>
-                            <small class="archive_button py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
-                              role="button" data-id="<?= $stall_slots_id; ?>" data-type="2">
-                              <i class="fa-solid fa-trash me-2"></i><span>Archive</span>
-                            </small>
+                            <?php
+                            if ($_SESSION['admin']['role'] === 1) {
+                              ?>
+                              <small class="archive_button py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
+                                role="button" data-id="<?= $stall_slots_id; ?>" data-type="2">
+                                <i class="fa-solid fa-trash me-2"></i><span>Archive</span>
+                              </small>
+                              <?php
+                            }
+                            ?>
                           </div>
                         </td>
                       </tr>
