@@ -20,12 +20,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $confirmation_token = bin2hex(random_bytes(16)); // Generate a unique token
 
+
+    session_start();  // Start the session
+    $edited_by = $_SESSION['admin']['admin_id'];
+
     // If there's a stall_slots_id, update the record
     if (isset($_POST['stall_slots_id']) && !empty($_POST['stall_slots_id'])) {
 
         $stall_slots_id = $_POST['stall_slots_id'];
 
-        $sqlUpdate = "UPDATE stall_slots SET tenantname = :tenantname, monthly = :monthly, email = :email, phonenumber = :phonenumber, location = :location, manager_name = :manager_name, confirmation_token = :confirmation_token WHERE stall_slots_id = :stall_slots_id";
+        $sqlUpdate = "UPDATE stall_slots 
+        SET tenantname = :tenantname, 
+            monthly = :monthly, 
+            email = :email, 
+            phonenumber = :phonenumber, 
+            location = :location, 
+            manager_name = :manager_name, 
+            confirmation_token = :confirmation_token,
+            edited_by = :edited_by,    
+            date_edited = NOW()         
+        WHERE stall_slots_id = :stall_slots_id";
 
         $updateQuery = $conn->prepare($sqlUpdate);
         $updateQuery->bindParam(':tenantname', $tenantname);
@@ -35,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $updateQuery->bindParam(':location', $location);
         $updateQuery->bindParam(':manager_name', $manager_name);
         $updateQuery->bindParam(':confirmation_token', $confirmation_token);
+        $updateQuery->bindParam(':edited_by', $edited_by);
         $updateQuery->bindParam(':stall_slots_id', $stall_slots_id);
 
         if ($updateQuery->execute()) {

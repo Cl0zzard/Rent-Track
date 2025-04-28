@@ -12,6 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $url = "../transaction?stall_slots_id=" . $stall_slots_id;
     $redirectScript = "<script>window.location.href = '" . $url . "';</script>";
 
+    session_start();  // Start the session
+    $edited_by = $_SESSION['admin']['admin_id'];
+
     if (isset($_POST['transaction_type']) && $_POST['transaction_type'] == '1') {
         // CREATE or UPDATE TRANSACTION HISTORY
         $balance = floatval($_POST['balance']);
@@ -54,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             balance = :balance,
                             penalty = :penalty,
                             status = :status,
-                            duedate = :duedate 
+                            duedate = :duedate, 
+                            transaction_edited_by = :edited_by,    
+                            transaction_date_edited = NOW()         
                         WHERE transaction_history_id = :transaction_history_id";
 
                 $update = $conn->prepare($sql);
@@ -63,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $update->bindParam(':penalty', $penalty);
                 $update->bindParam(':status', $status);
                 $update->bindParam(':duedate', $duedate);
+                $update->bindParam(':edited_by', $edited_by);
                 $update->bindParam(':transaction_history_id', $transaction_history_id);
 
                 if ($update->execute()) {
@@ -140,13 +146,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                           SET balance = :balance,
                               amount_paid = :amount_paid,
                               status = :status,
-                              completed_date = :completed_date
+                              completed_date = :completed_date,
+                              transaction_edited_by = :edited_by,    
+                              transaction_date_edited = NOW()           
                           WHERE transaction_history_id = :transaction_history_id";
             $updateQuery = $conn->prepare($sqlUpdate);
             $updateQuery->bindParam(':balance', $updated_balance);
             $updateQuery->bindParam(':amount_paid', $updated_amount_paid);
             $updateQuery->bindParam(':status', $status);
             $updateQuery->bindParam(':completed_date', $completed_date);
+            $updateQuery->bindParam(':edited_by', $edited_by);
             $updateQuery->bindParam(':transaction_history_id', $transaction_history_id);
 
             if ($updateQuery->execute()) {

@@ -162,6 +162,8 @@ if ($rows) {
                     <th>Outstanding + Penalty(2%)</th>
                     <th>Due Date</th>
                     <th>Status</th>
+                    <th>Last Edited</th>
+                    <th>Edited By</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -190,10 +192,11 @@ if ($rows) {
 
 
                   // SQL query to get data with limit and offset
-                  $sql = "SELECT *, th.status as th_status
+                  $sql = "SELECT *, th.status as th_status,  ss.*, aa.name AS edited_by_name
               FROM transaction_history th
               INNER JOIN stall_slots ss 
               ON ss.stall_slots_id = th.stall_slots_id
+              LEFT JOIN admin_account aa ON th.transaction_edited_by = aa.admin_id
               WHERE th.stall_slots_id = :stall_slots_id
               LIMIT :limit OFFSET :offset";
                   $stmt = $conn->prepare($sql);
@@ -233,6 +236,7 @@ if ($rows) {
                       }
 
                       $formatdate = date("F j, Y", strtotime($duedate));
+                      $formatdateedited = !empty($transaction_date_edited) ? date("F j, Y", strtotime($transaction_date_edited)) : 'No edits yet';
                       ?>
 
                       <tr data-id="2">
@@ -249,6 +253,8 @@ if ($rows) {
                             <?= $status != null ? $status_txt : 'no due date'; ?>
                           </span>
                         </td>
+                        <td data-label="Last Edited"><?= $formatdateedited; ?></td>
+                        <td><?= $row['edited_by_name'] ?? 'No edits yet'; ?></td>
                         <td data-label="Action" width="160">
                           <div class="d-flex align-items-center column-gap-3">
                             <small>

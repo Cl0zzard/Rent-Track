@@ -6,12 +6,12 @@ if (!isset($_SESSION['admin']['admin_id'])) {
     exit;
 }
 
-include "connect.php"; 
+include "connect.php";
 
 ?>
 
 <style>
-      .footer {
+    .footer {
         position: fixed;
         bottom: 0;
         width: 100%;
@@ -20,57 +20,64 @@ include "connect.php";
         background-color: #fff;
         padding: 10px 0;
     }
+
     .ff-roman {
         font-family: "Times New Roman", Times, serif;
     }
+
     @media print {
         body {
             -webkit-print-color-adjust: exact !important;
         }
+
         .page-break-avoid {
             break-inside: avoid;
             page-break-inside: avoid;
         }
     }
 </style>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 <div class="row mx-0">
-  <div class="col-12 d-flex align-items-center justify-content-center column-gap-4 mb-4 mx-4">
-    <img src="images/logo.png" height="80px" width="80px">
-    <div class="text-center">
-      <h1 class="m-0 mb-1">University of San Agustin</h1>
-      <p class="m-0">General Luna St, Iloilo City Proper, Iloilo City, <br> 5000 Iloilo, Phillippines</p>
+    <div class="col-12 d-flex align-items-center justify-content-center column-gap-4 mb-4 mx-4">
+        <img src="images/logo.png" height="80px" width="80px">
+        <div class="text-center">
+            <h1 class="m-0 mb-1">University of San Agustin</h1>
+            <p class="m-0">General Luna St, Iloilo City Proper, Iloilo City, <br> 5000 Iloilo, Phillippines</p>
+        </div>
+
     </div>
-    
-  </div>
-  <div class="row col-12 mx-0 row-gap-4 justify-content-center border border-dark py-3">
-          <h3 class="text-center">STALL RECORDS</h3>
-          <!-- Bar Chart Container -->
-          <div class="col-12">
-            <div class="shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
+    <div class="row col-12 mx-0 row-gap-4 justify-content-center border border-dark py-3">
+        <h3 class="text-center">STALL RECORDS</h3>
+        <!-- Bar Chart Container -->
+        <div class="col-12">
+            <div
+                class="shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
                 <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold">
                     Yearly Rate
                 </div>
                 <div class="w-100 p-3">
-                    <canvas id="myBarChart" style="max-width: 100% !important; max-height: 100%;" ></canvas>
+                    <canvas id="myBarChart" style="max-width: 100% !important; max-height: 100%;"></canvas>
                 </div>
             </div>
-          </div>
+        </div>
 
-          <!-- Pie Chart Container -->
-          <div class="col-auto">
-            <div class="shadow d-flex flex-column align-items-center justify-content-center border border-1 p-0 rounded-2">
+        <!-- Pie Chart Container -->
+        <div class="col-auto">
+            <div
+                class="shadow d-flex flex-column align-items-center justify-content-center border border-1 p-0 rounded-2">
                 <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold mb-auto">
                     Rent Location Rate
                 </div>
-                <div class="w-100 d-flex align-items-center justify-content-center p-3" >
+                <div class="w-100 d-flex align-items-center justify-content-center p-3">
                     <canvas id="statusPieChart" style="max-width: 100% !important; max-height: 86%;"></canvas>
                 </div>
             </div>
-          </div>
-          <div class="col-12 page-break-avoid">
-            <div class="shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
+        </div>
+        <div class="col-12 page-break-avoid">
+            <div
+                class="shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
                 <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold">
                     Monthly Rate
                 </div>
@@ -78,14 +85,14 @@ include "connect.php";
                     <canvas id="myBarChart3" style="max-width: 100% !important; max-height: 100%;"></canvas>
                 </div>
             </div>
-          </div>
+        </div>
 
-  </div>
+    </div>
 
-  <div class="footer">
-    <strong>Prepared by: Admin</strong>
-    <div><?= $_SESSION['admin']['name']?></div>
-</div>
+    <div class="footer">
+        <strong>Prepared by: Admin</strong>
+        <div><?= $_SESSION['admin']['name'] ?></div>
+    </div>
 </div>
 
 <?php
@@ -126,14 +133,6 @@ foreach ($results as $row) {
     $percentage = $row['total_amount'] ?? 0;
     $year_percentage[] = round($percentage, 2); // Round to 2 decimal places
 }
-
-
-
-
-
-
-
-
 
 //Get each total rate of location
 $sql = "SELECT 
@@ -203,7 +202,7 @@ foreach ($results as $row) {
 // Calculate percentages for each month
 foreach ($results as $row) {
     $month = $row['month'];
-    
+
     // FIXED: Use mktime() to convert month number to month name
     $months3[] = date("F", mktime(0, 0, 0, $month, 1));
     $monthly_percentage3[] = $row['total_amount'] ?? 0;
@@ -212,13 +211,17 @@ foreach ($results as $row) {
 
 ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
 
 <script>
-  // JavaScript for printing and closing window after print
-  window.print();  
-  window.onafterprint = window.close; 
+    Chart.register(ChartDataLabels);
+    // JavaScript for printing and closing window after print
+    window.print();
+    window.onafterprint = window.close;
 
     const ctx1 = document.getElementById('myBarChart').getContext('2d');
     const years = <?php echo json_encode($year); ?>;
@@ -267,11 +270,24 @@ foreach ($results as $row) {
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(tooltipItem) {
+                        label: function (tooltipItem) {
                             const datasetLabel = tooltipItem.chart.data.datasets[tooltipItem.datasetIndex].label || ''; // Get dataset label
                             const value = tooltipItem.raw || 0; // Get the value
                             return `${datasetLabel}: ₱ ${value.toFixed(2)}`; // Format the tooltip as "Label: Value %"
                         }
+                    }
+                },
+                datalabels: {  // ADD THIS PART
+                    anchor: 'center',
+                    align: 'center',
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    },
+                    formatter: (value) => {
+                        // Format value with commas and ₱ sign
+                        return `₱ ${value.toLocaleString()}`;
                     }
                 }
             }
@@ -281,7 +297,7 @@ foreach ($results as $row) {
     new Chart(ctx1, config1);
 
     // ====================================================================
-    
+
     const ctx2 = document.getElementById('statusPieChart').getContext('2d');
 
     // Fetch PHP variables and parse them into JavaScript
@@ -317,11 +333,24 @@ foreach ($results as $row) {
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(tooltipItem) {
+                        label: function (tooltipItem) {
                             const label = tooltipItem.label || '';
                             const value = tooltipItem.raw || 0;
                             return `${label}: ₱ ${value.toFixed(2)}`;
                         }
+                    }
+                },
+                datalabels: {  // ADD THIS PART
+                    anchor: 'center',
+                    align: 'center',
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    },
+                    formatter: (value) => {
+                        // Format value with commas and ₱ sign
+                        return `₱ ${value.toLocaleString()}`;
                     }
                 }
             }
@@ -338,68 +367,81 @@ foreach ($results as $row) {
 
 
     const ctx3 = document.getElementById('myBarChart3').getContext('2d'); // Unique ID
-const months3 = <?php echo json_encode($months3); ?>;
-const totals3 = <?php echo json_encode($monthly_percentage3); ?>;
+    const months3 = <?php echo json_encode($months3); ?>;
+    const totals3 = <?php echo json_encode($monthly_percentage3); ?>;
 
-const data3 = {
-    labels: months3, // X-axis labels for each month
-    datasets: [{
-        label: 'Total Rate Per Month', // Dataset label
-        data: totals3, // Data for the bar chart
-        backgroundColor: ['#FFC300', '#FF5733', '#DAF7A6'], // Different colors for each bar chart
-        borderColor: '#003366', // Bar border color
-        borderWidth: 1 // Border width
-    }]
-};
+    const data3 = {
+        labels: months3, // X-axis labels for each month
+        datasets: [{
+            label: 'Total Rate Per Month', // Dataset label
+            data: totals3, // Data for the bar chart
+            backgroundColor: ['#FFC300', '#FF5733', '#DAF7A6'], // Different colors for each bar chart
+            borderColor: '#003366', // Bar border color
+            borderWidth: 1 // Border width
+        }]
+    };
 
-const config3 = {
-    type: 'bar',
-    data: data3,
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    display: false // Remove horizontal grid lines
-                }
-            },
-            x: {
-                grid: {
-                    display: false // Remove vertical grid lines
+    const config3 = {
+        type: 'bar',
+        data: data3,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        display: false // Remove horizontal grid lines
+                    }
                 },
-                ticks: {
-                    autoSkip: true, // Automatically skip ticks if needed
-                    maxRotation: 45, // Limit label rotation for better visibility
-                    minRotation: 30
-                }
-            }
-        },
-        animation: {
-            duration: 2500, // Animation duration in milliseconds
-            easing: 'easeOutQuart' // Animation easing
-        },
-        plugins: {
-            legend: {
-                labels: {
-                    font: {
-                        size: 14
+                x: {
+                    grid: {
+                        display: false // Remove vertical grid lines
+                    },
+                    ticks: {
+                        autoSkip: true, // Automatically skip ticks if needed
+                        maxRotation: 45, // Limit label rotation for better visibility
+                        minRotation: 30
                     }
                 }
             },
-            tooltip: {
-                callbacks: {
-                    label: function(tooltipItem) {
-                        const datasetLabel = tooltipItem.chart.data.datasets[tooltipItem.datasetIndex].label || ''; // Get dataset label
-                        const value = tooltipItem.raw || 0; // Get the value
-                        return `${datasetLabel}: ₱ ${value.toFixed(2)}`; // Format the tooltip as "Label: Value %"
+            animation: {
+                duration: 2500, // Animation duration in milliseconds
+                easing: 'easeOutQuart' // Animation easing
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            const datasetLabel = tooltipItem.chart.data.datasets[tooltipItem.datasetIndex].label || ''; // Get dataset label
+                            const value = tooltipItem.raw || 0; // Get the value
+                            return `${datasetLabel}: ₱ ${value.toFixed(2)}`; // Format the tooltip as "Label: Value %"
+                        }
+                    }
+                },
+                datalabels: {  // ADD THIS PART
+                    anchor: 'center',
+                    align: 'center',
+                    color: 'white',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    },
+                    formatter: (value) => {
+                        // Format value with commas and ₱ sign
+                        return `₱ ${value.toLocaleString()}`;
                     }
                 }
             }
         }
-    }
-};
+    };
 
-new Chart(ctx3, config3); // Initialize the third graph
+    new Chart(ctx3, config3); // Initialize the third graph
 
 </script>

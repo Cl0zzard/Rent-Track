@@ -126,6 +126,10 @@ include 'connect.php';
                     </select>
                   </div>
                 </form>
+                <div>
+                  <input type="text" id="search-bar" class="form-control form-control-sm rounded-1 py-2"
+                    placeholder="Search here">
+                </div>
               </div>
             </div>
 
@@ -196,6 +200,7 @@ include 'connect.php';
                           break;
                       }
                       $formatdate = date("F j, Y", strtotime($date_added));
+                      $formatdateedited = !empty($date_edited) ? date("F j, Y", strtotime($date_edited)) : 'No edits yet';
                       ?>
                       <tr data-id="2">
                         <td data-label="#" width="50"><?= $index++; ?></td>
@@ -210,8 +215,27 @@ include 'connect.php';
                         </td>
                         <td data-label="Location"><?= $location_txt; ?></td>
                         <td data-label="Date Added"><?= $formatdate; ?></td>
-                        <td data-label="Last Edited"><?= $email; ?></td>
-                        <td data-label="Edited by"><?= $email; ?></td>
+                        <td data-label="Last Edited"><?= $formatdateedited; ?></td>
+                        <td data-label="Edited by">
+                          <?php
+                          $sql = "
+                          SELECT stall_slots.*, admin_account.name AS edited_by_name
+                          FROM stall_slots
+                          LEFT JOIN admin_account ON stall_slots.edited_by = admin_account.admin_id
+                          WHERE stall_slots.stall_slots_id = :stall_slots_id
+                        ";
+
+                          $updateQuery = $conn->prepare($sql);
+                          $updateQuery->bindParam(':stall_slots_id', $stall_slots_id);
+                          $updateQuery->execute();
+                          $row = $updateQuery->fetch(PDO::FETCH_ASSOC);
+
+                          // Get the name of the person who edited (if any)
+                          $edited_by_name = $row['edited_by_name'] ?? 'No edits yet';
+                          echo $edited_by_name;
+
+                          ?>
+                        </td>
                         <td data-label="File" style="min-width: 120px; max-width: 250px; word-break: break-word;">
                           <?php
                           $sql2 = "SELECT *
@@ -322,6 +346,10 @@ include 'connect.php';
   </div>
   <?php include 'modal/add-tenant.php' ?>
   <?php include "plugins-footer.php"; ?>
+  <script>
+    const sessionData = <?= json_encode($_SESSION); ?>;
+    console.log(sessionData);
+  </script>
   <script type="text/javascript">
     $(document).ready(function () {
       // Handle changes to the number of entries shown
