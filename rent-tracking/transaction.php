@@ -277,11 +277,18 @@ if ($rows) {
                                 <i class="far fa-edit me-2 "></i><span class="">Edit</span>
                               </a>
                             </small>
-                            <small class="delete_data py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
-                              role="button" data-id="<?= $transaction_history_id; ?>" data-table="transaction_history"
-                              data-type="transaction_history_id">
-                              <i class="far fa-trash-alt me-2 "></i><span class="">Delete</span>
-                            </small>
+                            <?php
+                            if ($_SESSION['admin']['role'] === 1) {
+                              ?>
+                              <small class="delete_data py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
+                                role="button" data-id="<?= $transaction_history_id; ?>" data-table="transaction_history"
+                                data-type="transaction_history_id">
+                                <i class="far fa-trash-alt me-2 "></i><span class="">Delete</span>
+                              </small>
+                              <?php
+                            }
+                            ?>
+
                           </div>
                         </td>
                       </tr>

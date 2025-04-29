@@ -206,15 +206,21 @@ include 'connect.php';
                                 <i class="fa-solid fa-print me-2"></i><span>Print</span>
                               </small>
                             </a>
-                            <small class="archive_button py-1 px-2 rounded-1 text-bg-primary d-flex align-items-center"
-                              role="button" data-id="<?= $stall_slots_id; ?>" data-type="1">
-                              <i class="fa-solid fa-archive me-2 "></i><span class="">Unarchive</span>
-                            </small>
-                            <small class="delete_data py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
-                              role="button" data-id="<?= $stall_slots_id; ?>" data-table="stall_slots"
-                              data-type="stall_slots_id">
-                              <i class="far fa-trash-alt me-2 "></i><span class="text-nowrap">Delete</span>
-                            </small>
+                            <?php
+                            if ($_SESSION['admin']['role'] === 1) {
+                              ?>
+                              <small class="archive_button py-1 px-2 rounded-1 text-bg-primary d-flex align-items-center"
+                                role="button" data-id="<?= $stall_slots_id; ?>" data-type="1">
+                                <i class="fa-solid fa-archive me-2 "></i><span class="">Unarchive</span>
+                              </small>
+                              <small class="delete_data py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
+                                role="button" data-id="<?= $stall_slots_id; ?>" data-table="stall_slots"
+                                data-type="stall_slots_id">
+                                <i class="far fa-trash-alt me-2 "></i><span class="text-nowrap">Delete</span>
+                              </small>
+                              <?php
+                            }
+                            ?>
                           </div>
                         </td>
                       </tr>
