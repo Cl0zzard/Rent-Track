@@ -145,7 +145,7 @@ include 'connect.php';
                     <th>Monthly</th>
                     <th>Location</th>
                     <th>Date Added</th>
-                    <th>Last Edited</th>
+                    <!-- <th>Last Edited</th> -->
                     <th>Edited By</th>
                     <th>File</th>
                     <th>Action</th>
@@ -215,7 +215,7 @@ include 'connect.php';
                         </td>
                         <td data-label="Location"><?= $location_txt; ?></td>
                         <td data-label="Date Added"><?= $formatdate; ?></td>
-                        <td data-label="Last Edited"><?= $formatdateedited; ?></td>
+                        <!-- <td data-label="Last Edited"><?= $formatdateedited; ?></td> -->
                         <td data-label="Edited by">
                           <?php
                           $sql = "
@@ -231,7 +231,7 @@ include 'connect.php';
                           $row = $updateQuery->fetch(PDO::FETCH_ASSOC);
 
                           // Get the name of the person who edited (if any)
-                          $edited_by_name = $row['edited_by_name'] ?? 'No edits yet';
+                          $edited_by_name = $row['edited_by_name'] . ' ' . $formatdateedited ?? 'No edits yet';
                           echo $edited_by_name;
 
                           ?>

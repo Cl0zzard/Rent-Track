@@ -162,7 +162,7 @@ if ($rows) {
                     <th>Outstanding + Penalty(2%)</th>
                     <th>Due Date</th>
                     <th>Status</th>
-                    <th>Last Edited</th>
+                    <!-- <th>Last Edited</th> -->
                     <th>Edited By</th>
                     <th>Action</th>
                   </tr>
@@ -253,8 +253,8 @@ if ($rows) {
                             <?= $status != null ? $status_txt : 'no due date'; ?>
                           </span>
                         </td>
-                        <td data-label="Last Edited"><?= $formatdateedited; ?></td>
-                        <td><?= $row['edited_by_name'] ?? 'No edits yet'; ?></td>
+                        <!-- <td data-label="Last Edited"><?= $formatdateedited; ?></td> -->
+                        <td><?= $row['edited_by_name'] . ' ' . $formatdateedited ?? 'No edits yet'; ?></td>
                         <td data-label="Action" width="160">
                           <div class="d-flex align-items-center column-gap-3">
                             <small>
