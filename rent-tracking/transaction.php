@@ -258,17 +258,18 @@ if ($rows) {
                         <td data-label="Action" width="160">
                           <div class="d-flex align-items-center column-gap-3">
                             <small>
-                              <a type="button" target="_blank" class="pay_btn py-1 px-2 rounded-1 text-bg-success text-decoration-none d-flex align-items-center 
+                              <a type="button" class="pay_btn py-1 px-2 rounded-1 text-bg-success text-decoration-none d-flex align-items-center 
                     <?php echo ($th_status == 1 || $th_status == 3) ? 'disabled opacity-50' : ''; ?>"
                                 href="javascript:void(0);"
                                 data-data1="<?= $transaction_history_id ? $transaction_history_id : null; ?>"
-                                data-data2="<?= $duedate; ?>" <?php echo ($th_status == 1 || $th_status == 3) ? 'style="pointer-events: none;"' : ''; ?>>
+                                data-data2="<?= $duedate; ?>" data-data3="<?= $balance != null ? $balance : '0'; ?>" <?php echo ($th_status == 1 || $th_status == 3) ? 'style="pointer-events: none;"' : ''; ?>>
                                 <i class="fa-solid fa-wallet me-2"></i><span class="">Pay</span>
                               </a>
+                              <!-- target="_blank" -->
                             </small>
 
                             <small>
-                              <a type="button" target="_blank"
+                              <a type="button"
                                 class="edit_transaction py-1 px-2 rounded-1 text-bg-primary text-decoration-none d-flex align-items-center"
                                 data-data1="<?= $transaction_history_id ? $transaction_history_id : null; ?>"
                                 data-data2="<?= $balance != null ? $balance : '0'; ?>"
@@ -276,6 +277,7 @@ if ($rows) {
                                 data-data5="<?= $duedate; ?>">
                                 <i class="far fa-edit me-2 "></i><span class="">Edit</span>
                               </a>
+                              <!-- target="_blank" -->
                             </small>
                             <?php
                             if ($_SESSION['admin']['role'] === 1) {

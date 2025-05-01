@@ -17,7 +17,7 @@
 					<div class="d-flex flex-column flex-lg-row gap-2 ">
 						<div class="form-floating w-100">
 							<input required type="text" name="tenantname" id="tenantname" class="form-control rounded-1"
-								placeholder="input here">
+								placeholder="input here" maxlength="50">
 							<label for="tenantname">Stall Name</label>
 						</div>
 
@@ -42,7 +42,7 @@
 					</div>
 					<div class="form-floating w-100">
 						<input required type="text" name="manager_name" id="manager_name" class="form-control rounded-1"
-							placeholder="input here">
+							placeholder="input here" maxlength="50">
 						<label for="manager_name">Manager Name</label>
 					</div>
 					<div class="form-floating">
@@ -93,7 +93,7 @@
 	</div>
 </div>
 
-<script>
+<!-- <script>
 	const form = document.querySelector('form');
 	const submitButton = document.getElementById('addtenant');
 
@@ -121,5 +121,30 @@
 		// Passed validation — show loading state
 		submitButton.innerHTML = 'Saving... <i class="fas fa-spinner fa-spin"></i>';
 		submitButton.disabled = true;
+	});
+</script> -->
+
+<script>
+	document.querySelector('form[action="controller/add-tenant.php"]').addEventListener('submit', function (event) {
+		// Get form values
+		const email = document.getElementById('email').value.trim();
+		const phone = document.getElementById('phonenumber').value.trim();
+
+		// Regex patterns
+		const emailRegex = /^[A-Za-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|icloud\.com|usa\.edu\.ph)$/;
+		const phoneRegex = /^[0-9]{11}$/; // Example: Philippine mobile format
+
+		// Validation checks
+		if (!emailRegex.test(email)) {
+			alert("Please enter a valid email address. Only Gmail, Yahoo, Outlook, Hotmail, or iCloud email addresses are allowed.");
+			event.preventDefault();
+			return;
+		}
+
+		if (!phoneRegex.test(phone)) {
+			alert("Phone number must be 11 digits.");
+			event.preventDefault();
+			return;
+		}
 	});
 </script>

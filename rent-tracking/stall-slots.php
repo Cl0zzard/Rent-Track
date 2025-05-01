@@ -250,8 +250,8 @@ include 'connect.php';
                             foreach ($rows2 as $row2):
                               ?>
                               <div text-wrap class="mb-2 d-flex align-items-start column-gap-2">
-                                <a class="text-wrap" target="_blank"
-                                  href="upload/<?= $row2['stall_file']; ?>"><?= $row2['stall_file']; ?></a>
+                                <a class="text-wrap" href="upload/<?= $row2['stall_file']; ?>"><?= $row2['stall_file']; ?></a>
+                                <!-- target="_blank" -->
                                 <small class="delete_data" role="button" data-id="<?= $row2['stall_slots_file_id']; ?>"
                                   data-table="stall_slots_file" data-type="stall_slots_file_id">
                                   <i class="fa-solid fa-xmark text-danger "></i></span>
@@ -272,12 +272,12 @@ include 'connect.php';
                               <i class="fa-solid fa-upload me-2"></i><span>Upload</span>
                             </small>
                             <small>
-                              <a type="button" target="_blank" class="edit_category py-1 px-2 rounded-1 text-bg-warning text-decoration-none d-flex align-items-center 
+                              <a type="button" class="edit_category py-1 px-2 rounded-1 text-bg-warning text-decoration-none d-flex align-items-center 
                             <?php echo ($confirmed == 0) ? 'disabled opacity-50' : ''; ?>"
                                 href="transaction?stall_slots_id=<?= $stall_slots_id; ?>" <?php echo ($confirmed == 0) ? 'style="pointer-events: none;"' : ''; ?>>
                                 <i class="fa-solid fa-wallet me-2"></i><span>Transactions</span>
                               </a>
-
+                              <!-- target="_blank" -->
                             </small>
                             <small>
                               <a type="button"

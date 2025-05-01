@@ -16,13 +16,13 @@
 					<div class="d-flex flex-column flex-lg-row gap-2 ">
 						<div class="form-floating w-100">
 							<input required type="text" name="name" id="name" class="form-control rounded-1"
-								placeholder="input here">
+								placeholder="input here" maxlength="50">
 							<label for="name">Name</label>
 						</div>
 
 						<div class="form-floating w-100">
 							<input required type="text" name="username" id="username" class="form-control rounded-1"
-								placeholder="input here">
+								placeholder="input here" maxlength="50">
 							<label for="username">Username</label>
 						</div>
 					</div>

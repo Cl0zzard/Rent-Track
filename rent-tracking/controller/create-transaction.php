@@ -114,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
         // PROCESS PAYMENT
+
         $transaction_history_id = $_POST['transaction_history_id'];
         $amount_paid = floatval($_POST['amount_paid']);
         $dateToday = date('F j, Y');
@@ -126,8 +127,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            $updated_balance = round($row['balance'] - $amount_paid, 2);
-            $updated_amount_paid = round($row['amount_paid'] + $amount_paid, 2);
+
+            if ($amount_paid > $row['balance']) {
+                $updated_balance = 0;
+                $updated_amount_paid = $row['balance'];
+            } else {
+                $updated_balance = round($row['balance'] - $amount_paid, 2);
+                $updated_amount_paid = round($row['amount_paid'] + $amount_paid, 2);
+            }
 
             $today = date('Y-m-d');
             $dueDate = $row['duedate'];

@@ -232,7 +232,7 @@ foreach ($results as $row) {
         datasets: [{
             label: 'Total Rate Per Year', // Dataset label
             data: totals, // Data for the bar chart
-            backgroundColor: ['#FF5733', '#3357FF', '#FFC107', '#8E44AD', '#1ABC9C'], // Different colors for each bar
+            backgroundColor: 'orange', // Different colors for each bar
             borderColor: '#003366', // Bar border color
             borderWidth: 1 // Border width
         }]
@@ -375,7 +375,7 @@ foreach ($results as $row) {
         datasets: [{
             label: 'Total Rate Per Month', // Dataset label
             data: totals3, // Data for the bar chart
-            backgroundColor: ['#FFC300', '#FF5733', '#DAF7A6'], // Different colors for each bar chart
+            backgroundColor: 'blue', // Different colors for each bar chart
             borderColor: '#003366', // Bar border color
             borderWidth: 1 // Border width
         }]

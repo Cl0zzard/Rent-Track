@@ -133,7 +133,7 @@ include 'connect.php';
                                 FROM transaction_history th 
                                 JOIN stall_slots ss 
                                 ON th.stall_slots_id = ss.stall_slots_id 
-                                WHERE th.status = 2"
+                                WHERE th.status = 2 AND ss.status = 1"
                                 );
 
                                 $stmt->execute();
@@ -221,12 +221,13 @@ include 'connect.php';
 
 
 
-
-    //Get each total rate of location
+    // Pie Chart Query //////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // Get each total rate of location
     $sql = "SELECT 
-            SUM(CASE WHEN ss.location = '1' THEN th.amount_paid ELSE 0 END) AS location1,
-            SUM(CASE WHEN ss.location = '2' THEN th.amount_paid ELSE 0 END) AS location2,
-            SUM(CASE WHEN ss.location = '3' THEN th.amount_paid ELSE 0 END) AS location3,
+            SUM(CASE WHEN ss.location = 1 THEN th.amount_paid ELSE 0 END) AS location1,
+            SUM(CASE WHEN ss.location = 2 THEN th.amount_paid ELSE 0 END) AS location2,
+            SUM(CASE WHEN ss.location = 3 THEN th.amount_paid ELSE 0 END) AS location3,
             SUM(th.amount_paid) AS total_amount
         FROM 
             transaction_history th
@@ -244,17 +245,19 @@ include 'connect.php';
     $location1 = (int) $result['location1'];
     $location2 = (int) $result['location2'];
     $location3 = (int) $result['location3'];
-    $total_amount = (int) $result['total_amount'];
-
+    // $total_amount = (int) $result['total_amount'];
+    
     // Avoid division by zero
-    if ($total_amount > 0) {
-        $location1_percentage = $location1;
-        $location2_percentage = $location2;
-        $location3_percentage = $location3;
-    } else {
-        $location1_percentage = $location2_percentage = $location3_percentage = 0;
-    }
-
+    // if ($total_amount > 0) {
+    //     $location1_percentage = $location1;
+    //     $location2_percentage = $location2;
+    //     $location3_percentage = $location3;
+    // } else {
+    //     $location1_percentage = $location2_percentage = $location3_percentage = 0;
+    // }
+    
+    // Pie Chart Query //////////////////////////////////////////////////////////////////////////////////////////////
+    
 
 
     // Monthly rate query for the third graph
@@ -311,7 +314,7 @@ include 'connect.php';
             datasets: [{
                 label: 'Total Rate Per Year', // Dataset label
                 data: totals, // Data for the bar chart
-                backgroundColor: ['#FF5733', '#3357FF', '#FFC107', '#8E44AD', '#1ABC9C'], // Different colors for each bar
+                backgroundColor: "orange", // Different colors for each bar
                 borderColor: '#003366', // Bar border color
                 borderWidth: 1 // Border width
             }]
@@ -362,20 +365,26 @@ include 'connect.php';
 
         new Chart(ctx1, config1);
 
-        // ====================================================================
+
+
+
+
+        // Pie Chart Setup Start //////////////////////////////////////////////////////////////////////////////////////////////
 
         const ctx2 = document.getElementById('statusPieChart').getContext('2d');
 
         // Fetch PHP variables and parse them into JavaScript
-        const location1 = <?php echo json_encode($location1_percentage); ?>;
-        const location2 = <?php echo json_encode($location2_percentage); ?>;
-        const location3 = <?php echo json_encode($location3_percentage); ?>;
+        const location1 = <?php echo json_encode($location1); ?>;
+        const location2 = <?php echo json_encode($location2); ?>;
+        const location3 = <?php echo json_encode($location3); ?>;
+
+        console.log(location1, location2, location3)
 
         // Define the dataset
-        const data2 = {
+        const pieData = {
             labels: ['USA BED Campus', 'USA Main Campus', 'USA Main Kiosks'],
             datasets: [{
-                label: 'Rent Location Rate',
+                label: 'Location Rate',
                 data: [location1, location2, location3],
                 backgroundColor: ['#4CAF50', '#FF5722', '#FFC107'], // Colors
                 hoverOffset: 4
@@ -383,9 +392,9 @@ include 'connect.php';
         };
 
         // Configure the pie chart
-        const config2 = {
+        const pieConfig = {
             type: 'pie',
-            data: data2,
+            data: pieData,
             options: {
                 responsive: true,
                 plugins: {
@@ -400,9 +409,9 @@ include 'connect.php';
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
-                                const label = tooltipItem.label || '';
+                                const datasetLabel = tooltipItem.dataset.label || '';
                                 const value = tooltipItem.raw || 0;
-                                return `${label}: ₱ ${value.toFixed(2)}`;
+                                return `${datasetLabel}: ₱ ${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                             }
                         }
                     }
@@ -411,10 +420,15 @@ include 'connect.php';
         };
 
         // Render the chart
-        new Chart(ctx2, config2);
+        new Chart(ctx2, pieConfig);
 
 
-        // ====================================================================
+        // Pie Chart Setup End //////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
 
 
@@ -428,7 +442,7 @@ include 'connect.php';
             datasets: [{
                 label: 'Total Rate Per Month', // Dataset label
                 data: totals3, // Data for the bar chart
-                backgroundColor: ['#FFC300', '#FF5733', '#DAF7A6'], // Different colors for each bar chart
+                backgroundColor: "yellow", // Different colors for each bar chart
                 borderColor: '#003366', // Bar border color
                 borderWidth: 1 // Border width
             }]
