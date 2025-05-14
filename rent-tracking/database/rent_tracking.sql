@@ -29,14 +29,14 @@ CREATE TABLE `admin_account` (
   `username` varchar(50) DEFAULT NULL,
   `password` text DEFAULT NULL,
   `resetToken` text DEFAULT NULL,
-  `role` tinyint(1) NOT NULL DEFAULT 2 COMMENT '1=admin\r\n2=staff',
+  `role` tinyint(1) NOT NULL DEFAULT 2 COMMENT '1=admin\r\n2=staff\r\n3=stall owner',
   `date_added` date NOT NULL DEFAULT current_timestamp(),
-  `address` text NOT NULL,
+  `address` text NOT NULL COMMENT 'staff=address\r\nstallowner=stallname',
   `phonenumber` text DEFAULT NULL,
   `status_archived` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=unarchived 2= archived	',
   `date_archived` date DEFAULT NULL,
   PRIMARY KEY (`admin_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,7 @@ CREATE TABLE `admin_account` (
 
 LOCK TABLES `admin_account` WRITE;
 /*!40000 ALTER TABLE `admin_account` DISABLE KEYS */;
-INSERT INTO `admin_account` VALUES (1,'admin','jpantoja@usa.edu.ph','admin','$2y$10$gLAl36tAIQDDSJjHjO18nOkr2agi/sW4qY9YDj9.z9fQUTnf4olOO','ea9954673fbce5ceced9c3e8356659f2859935b0c00cfffa57790f728a10b03cc03bc55cd364913c9ca741c44ab3d7993aeb',1,'2025-04-10','',NULL,1,NULL),(6,'Janelle','jpantoja@usa.edu.ph','Staff','$2y$10$Lt2oFwjA2WXvKMzTAPmcfu5bMD4jCXoQz9Y04H/8BTDqUwxqq70ZW',NULL,2,'2025-04-15','aaa','686987',1,NULL),(7,'azki','dannylreyes32@gmaffffsil.com','nuevavalencia','$2y$10$rzAnIPVy5NtKi.Ij.G0/3OslVhguZU/uq98B4BD0Yro.bx3/Y7f5u',NULL,2,'2025-04-21','dfdsfsfdsfs','09667332990',1,NULL),(8,'azki','dasdadada@dfdfd','raymenbeachresort','$2y$10$aZYApZ9HWhRLOXJwOtwVruhEHbgTlriTxhF4IE42GXFbo75WOmoXW',NULL,2,'2025-04-22','dfdsfsfdsfs','09667332213990',1,NULL),(9,'DANIEL A REYSOMA','dannylreyes32@g21312mail.com','nuevavalencia','$2y$10$1RcRV.lgq6BINEKxqSHnj..5V1VhIukruEXfp/6IAtu9HVShn68iu',NULL,2,'2025-04-22','dfdsfsfdsfs','09667332990',1,NULL),(10,'azki','aaaaaaaaaaaaaaaaaaaaaaaaaa@asas.com','raymenbeachresort','$2y$10$.ZMz8yoSTveWcPTWEwhfWO5vD.mWiBo9IkA6qotlZ/4to9A4nfF8u',NULL,2,'2025-04-22','dfdsfsfdsfs','09667332990',1,NULL),(11,'azkiadad','cao.sinaon@gmdadail.com','raymenbeachresort','$2y$10$JE8XK0cw2MJdjCAHEFaCOeXU.PnzN9pheDEz9MI7c4vxU6he1AQW2',NULL,2,'2025-04-22','dfdsfsfdsfs','09667332990',1,NULL),(20,'suisei','danielreysoma@gmail.com','jordan','$2y$10$Kkz7RClmptxxMkh6K1JmCeo0T4daiJ1A9b65p23ti3uXMRN4n4sQi',NULL,2,'2025-04-23','dfdsfsfdsfs','09667332990',1,NULL),(21,'Janelle','cao.sinaon@gmail.com','adadfrtrt','$2y$10$QCndXj33AKqRvIXnc7J/PuaetRigOpKUpxO3vmQXdlBQr0Sm86Vba',NULL,2,'2025-04-23','aaa','09667332990',1,NULL),(22,'flare','dannylreyes36@gmail.com','provinceofguimaras','$2y$10$iXV1.BPAT4UaZlQ20Qfg7OthrE.d9QMWRQ/G28OWe8Rjt38IWVzGm',NULL,2,'2025-04-23','sfdghfgfgfgj','09667332990',1,NULL),(23,'suisei','dannylreyes32@gmail.com','sidewalkers','$2y$10$viG4d7pZFtx.9ypuTNw.nevmwf..1a9JPOUU3MzTkfMU9Wo1pk44S',NULL,2,'2025-04-23','sd vffgdb fdgev32','09667332990',2,'2025-04-24'),(24,'sdd svdfgfdg','danielreysoma@gmail.com','gdfhdfhcng','$2y$10$K/nD94q8yvkmmP/gewlGqeFz4gGA2h3vMsScg8XoMlguKmJkoiBYW',NULL,2,'2025-04-23','ddfgsdcgdfgvc','09667332990',1,NULL),(25,'DANIEL A REYSOMA','danielreysoma@gmail.com','raymenbeachresort','$2y$10$lDbw2JTMMWp8PtRcRAN0XuxKNPk5cTq0bJgsk4j6rNQJLQpTki6a2',NULL,2,'2025-04-23','sxdazxcv dfvfb dfvbg','09667332990',1,NULL),(26,'azki','danielreysoma@gmail.com','azki','$2y$10$Dao1SkNjVYV3PH3mLdl4Re5Y6/pAXnzZl0Y6Y3kHIDCXG.DymhTLu',NULL,2,'2025-04-27','sfdghfgfgfgj','09667332990',1,NULL);
+INSERT INTO `admin_account` VALUES (1,'admin','jpantoja@usa.edu.ph','admin','$2y$10$gLAl36tAIQDDSJjHjO18nOkr2agi/sW4qY9YDj9.z9fQUTnf4olOO','ea9954673fbce5ceced9c3e8356659f2859935b0c00cfffa57790f728a10b03cc03bc55cd364913c9ca741c44ab3d7993aeb',1,'2025-04-10','',NULL,1,NULL),(6,'Janelle','jpantoja@usa.edu.ph','Staff','$2y$10$Lt2oFwjA2WXvKMzTAPmcfu5bMD4jCXoQz9Y04H/8BTDqUwxqq70ZW',NULL,2,'2025-04-15','aaa','686987',1,NULL),(40,'Hoshimachi Suisei','danielreysoma@gmail.com','Lorem','$2y$10$DOm4Mqhh/1/28qAg8HiSQ.GIbYgsBJ0ylCJEymW7kRsN4EzIYuAp.',NULL,3,'2025-05-09','Lorem\'s Ipsum','09667332990',1,NULL),(41,'Hoshimachi Suisei','dannylreyes36@gmail.com','LoremThe2nd','$2y$10$cxvsUpEftuGWwxZvGND1iOZAar4F2x9eato3IordNnU0ZDMsbr/aO',NULL,3,'2025-05-09','Tester Stall','09667332990',1,NULL);
 /*!40000 ALTER TABLE `admin_account` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,6 +58,7 @@ DROP TABLE IF EXISTS `stall_slots`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `stall_slots` (
   `stall_slots_id` int(11) NOT NULL AUTO_INCREMENT,
+  `tenant_account_id` int(11) NOT NULL,
   `tenantname` varchar(150) DEFAULT NULL,
   `monthly` float(10,2) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
@@ -72,7 +73,7 @@ CREATE TABLE `stall_slots` (
   `confirmed` tinyint(1) DEFAULT 0,
   `confirmation_token` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`stall_slots_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -81,7 +82,7 @@ CREATE TABLE `stall_slots` (
 
 LOCK TABLES `stall_slots` WRITE;
 /*!40000 ALTER TABLE `stall_slots` DISABLE KEYS */;
-INSERT INTO `stall_slots` VALUES (26,'Krispy Kings',5000.00,'jpantoja@usa.edu.ph','2147483647',1,'2025-04-15','2025-04-27',26,'2025-04-24',1,'Hezekiah',0,'90aa043532a9fab23c02c4fb177bf7b3'),(28,'Mcdonald',5000.00,'jpantoja@usa.edu.ph','2147483647',3,'2025-04-15',NULL,NULL,NULL,1,'Hezekiah',0,NULL),(29,'kopi',5000.00,'jpantoja@usa','2147483647',2,'2025-04-15','2025-04-27',NULL,NULL,1,'angelie',0,'978e33db1f3f23850f4a8b6cbf7cb42b'),(50,'Lorem\'s Ipsum',10000.00,'danielreysoma@gmail.com','09667332990',2,'2025-04-21','2025-04-27',NULL,NULL,1,'Hoshimachi Suiseiii',1,'0fe25e7acaa8804c2a55638cb6b55042'),(51,'Tester 3asdads',6000.00,'dannylreyes32@gmdadaail.com','09667332990',2,'2025-04-22',NULL,NULL,NULL,1,'Hoshimachi Suisei',0,'cb55ed92515a122b8e9507f7ff792750'),(52,'sfsddfcxdgc',6000.00,'dannylreyes32@gmail.com','096673329903245235',2,'2025-04-22',NULL,NULL,NULL,1,'ddsfggb',0,'ea302a735d92a078bd8f1023bdbd8501'),(53,'Lorem\'s Ipsumdada',5000.00,'danielreysoma@gmail.com','09667332990',2,'2025-04-22','2025-04-27',NULL,NULL,1,'Hoshimachi Suisei',1,'ae0ad3338827c4e1f214009c46d582fc'),(54,'asfsdgfdg',6000.00,'danielreysoma@gmail.com','09667332990',1,'2025-04-23',NULL,NULL,NULL,1,'Lorem Ipsum',0,'3a58c0e014d70f842ef8a5f56ef57b74'),(55,'asfsdgfdgddadada',6000.00,'danielreysoma@gmail.com','09667332990',1,'2025-04-23',NULL,NULL,'2025-04-24',1,'Lorem Ipsum',0,'3a58c0e014d70f842ef8a5f56ef57b74'),(56,'Lorem\'s Ipsumdadaadadadada',5000.00,'danielreysoma@gmail.com','09667332990',2,'2025-04-22',NULL,NULL,'2025-04-24',1,'Hoshimachi Suisei',1,'52b1f772cb7040c701149316ef188d40'),(57,'sfsddfcxdgchgjfgfdgbfd',6000.00,'dannylreyes32@gmail.com','096673329903245235',2,'2025-04-22',NULL,NULL,'2025-04-24',1,'ddsfggb',0,'ea302a735d92a078bd8f1023bdbd8501');
+INSERT INTO `stall_slots` VALUES (69,40,'Lorem\'s Ipsum',10000.00,'danielreysoma@gmail.com','09667332990',1,'2025-05-09','2025-05-09',1,'2025-05-09',1,'Hoshimachi Suisei',1,'c24d2033c7325e385ee84276b568b6ae'),(70,41,'Tester Stall',10000.00,'dannylreyes36@gmail.com','09667332990',1,'2025-05-09',NULL,NULL,'2025-05-09',1,'Hoshimachi Suisei',1,'3dfc85429b68ed30025ae78cd8ad5265');
 /*!40000 ALTER TABLE `stall_slots` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -149,7 +150,6 @@ CREATE TABLE `stall_slots_file` (
 
 LOCK TABLES `stall_slots_file` WRITE;
 /*!40000 ALTER TABLE `stall_slots_file` DISABLE KEYS */;
-INSERT INTO `stall_slots_file` VALUES (35,26,'Krispy_Kings_Krispy_Kings_rent_tracking.sql');
 /*!40000 ALTER TABLE `stall_slots_file` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -172,7 +172,7 @@ CREATE TABLE `transaction_history` (
   `transaction_edited_by` int(11) DEFAULT NULL,
   `transaction_date_edited` date DEFAULT NULL,
   PRIMARY KEY (`transaction_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=332 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=391 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -181,7 +181,7 @@ CREATE TABLE `transaction_history` (
 
 LOCK TABLES `transaction_history` WRITE;
 /*!40000 ALTER TABLE `transaction_history` DISABLE KEYS */;
-INSERT INTO `transaction_history` VALUES (265,34,25000.00,NULL,0.00,'2024-01-19',3,NULL,NULL,NULL),(266,34,0.00,0.00,25500.00,'2024-02-18',1,NULL,NULL,NULL),(267,34,0.00,0.00,51000.00,'2024-03-19',1,NULL,NULL,NULL),(268,34,0.00,101500.00,76500.00,'2024-04-19',1,'2025-04-19',NULL,NULL),(276,34,0.00,25000.00,0.00,'2024-05-19',1,'2025-04-19',NULL,NULL),(278,34,25000.00,0.00,0.00,'2024-06-18',3,NULL,NULL,NULL),(279,34,50500.00,0.00,25500.00,'2024-07-18',3,NULL,NULL,NULL),(280,34,76000.00,0.00,51000.00,'2024-08-17',3,NULL,NULL,NULL),(281,34,101500.00,0.00,76500.00,'2024-09-16',3,NULL,NULL,NULL),(282,34,127000.00,0.00,102000.00,'2024-10-16',3,NULL,NULL,NULL),(283,34,152500.00,0.00,127500.00,'2024-11-15',3,NULL,NULL,NULL),(284,34,178000.00,0.00,153000.00,'2024-12-15',3,NULL,NULL,NULL),(285,34,203500.00,0.00,178500.00,'2025-01-14',3,NULL,NULL,NULL),(286,34,229000.00,0.00,204000.00,'2025-02-13',3,NULL,NULL,NULL),(287,34,254500.00,0.00,229500.00,'2025-03-15',3,NULL,NULL,NULL),(288,34,280000.00,0.00,255000.00,'2025-04-14',3,NULL,NULL,NULL),(289,34,305500.00,0.00,280500.00,'2025-05-14',2,NULL,NULL,NULL),(290,35,0.00,10000.00,0.00,'2025-05-20',1,'2025-04-20',NULL,NULL),(291,35,0.00,10000.00,0.00,'2025-06-19',1,'2025-04-20',NULL,NULL),(292,35,10000.00,0.00,0.00,'2025-07-19',2,NULL,NULL,NULL),(293,36,10000.00,0.00,0.00,'2025-04-20',3,NULL,NULL,NULL),(294,36,0.00,20200.00,10200.00,'2025-05-20',1,'2025-04-21',NULL,NULL),(295,36,0.00,10000.00,0.00,'2025-06-19',1,'2025-04-21',NULL,NULL),(296,36,10000.00,0.00,0.00,'2025-07-19',2,NULL,NULL,NULL),(297,37,0.00,6000.00,0.00,'2025-04-17',1,'2025-04-21',NULL,NULL),(298,37,6000.00,0.00,0.00,'2025-04-19',3,NULL,NULL,NULL),(299,37,12120.00,0.00,6120.00,'2025-05-18',2,NULL,NULL,NULL),(300,38,0.00,6000.00,0.00,'2025-05-21',1,'2025-04-21',NULL,NULL),(301,38,6000.00,0.00,0.00,'2025-06-20',2,NULL,NULL,NULL),(302,39,5000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(303,40,6000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(304,41,10000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(305,42,10000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(306,43,10000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(307,44,10000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(308,45,5000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(309,46,6000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(310,47,6000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(311,48,10000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(312,49,10000.00,0.00,0.00,'2025-05-21',2,NULL,NULL,NULL),(313,50,0.00,10000.00,0.00,'2025-05-21',1,'2025-04-21',1,'2025-04-28'),(314,50,0.00,10000.00,0.00,'2025-06-20',1,'2025-04-23',NULL,NULL),(315,51,6000.00,0.00,0.00,'2025-05-22',2,NULL,NULL,NULL),(316,52,6000.00,0.00,0.00,'2025-05-22',2,NULL,NULL,NULL),(317,53,5000.00,0.00,0.00,'2025-05-22',2,NULL,NULL,NULL),(318,50,0.00,10000.00,0.00,'2025-07-20',1,'2025-04-23',NULL,NULL),(319,50,0.00,10000.00,0.00,'2025-08-19',1,'2025-04-23',NULL,NULL),(320,50,0.00,10000.00,0.00,'2025-09-18',1,'2025-04-23',NULL,NULL),(321,50,0.00,10000.00,0.00,'2025-10-18',1,'2025-04-23',NULL,NULL),(322,50,0.00,10000.00,0.00,'2025-11-17',1,'2025-04-23',NULL,NULL),(323,50,0.00,10000.00,0.00,'2025-12-17',1,'2025-04-23',NULL,NULL),(324,50,0.00,10000.00,0.00,'2026-01-16',1,'2025-04-23',NULL,NULL),(325,50,0.00,10000.00,0.00,'2026-02-15',1,'2025-04-23',NULL,NULL),(326,50,0.00,10000.00,0.00,'2026-03-17',1,'2025-04-23',NULL,NULL),(327,50,10000.00,0.00,0.00,'2026-04-16',2,NULL,NULL,NULL),(328,54,6000.00,0.00,0.00,'2025-05-23',2,NULL,NULL,NULL),(329,55,6000.00,0.00,0.00,'2025-05-23',2,NULL,NULL,NULL),(330,56,5000.00,0.00,0.00,'2025-05-23',2,NULL,NULL,NULL),(331,57,6000.00,0.00,0.00,'2025-05-23',2,NULL,NULL,NULL);
+INSERT INTO `transaction_history` VALUES (379,63,10000.00,0.00,0.00,'2025-06-08',2,NULL,NULL,NULL),(380,64,6000.00,0.00,0.00,'2025-06-08',2,NULL,NULL,NULL),(381,65,1123414.00,0.00,0.00,'2025-06-08',2,NULL,NULL,NULL),(382,66,10000.00,0.00,0.00,'2025-06-08',2,NULL,NULL,NULL),(383,67,6000.00,0.00,0.00,'2025-06-08',2,NULL,NULL,NULL),(384,68,10000.00,0.00,0.00,'2025-06-08',2,NULL,NULL,NULL),(385,69,0.00,10000.00,0.00,'2025-04-15',1,'2025-05-14',1,'2025-05-14'),(386,70,10000.00,0.00,0.00,'2025-05-16',2,NULL,1,'2025-05-14'),(390,69,10000.00,0.00,0.00,'2025-05-15',2,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `transaction_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -309,4 +309,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-28 19:57:05
+-- Dump completed on 2025-05-14 16:55:26

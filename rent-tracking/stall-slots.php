@@ -284,7 +284,8 @@ include 'connect.php';
                                 class="edit_tenant py-1 px-2 rounded-1 text-bg-primary text-decoration-none d-flex align-items-center"
                                 data-data1="<?= $stall_slots_id; ?>" data-data2="<?= $tenantname; ?>"
                                 data-data3="<?= $monthly; ?>" data-data4="<?= $email; ?>" data-data5="<?= $phonenumber; ?>"
-                                data-data6="<?= $location; ?>" data-data7="<?= $manager_name; ?>">
+                                data-data6="<?= $location; ?>" data-data7="<?= $manager_name; ?>"
+                                data-data8="<?= $tenant_account_id; ?>">
                                 <i class="fa-solid fa-pen-to-square me-2 "></i><span class="">Edit</span>
                               </a>
                             </small>

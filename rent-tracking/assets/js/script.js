@@ -133,12 +133,15 @@ $(".add_tenant").click(function (e) {
   $("#tenant-modal").modal("show");
   $("#tenant-modal form")[0].reset();
   $(".modal-title").text("ADD NEW TENANT INFORMATION");
+  $("#manager_username").show().find("input").prop("required", true);
+  $("#manager_password").show().find("input").prop("required", true);
 });
 
 $(".edit_tenant").click(function (e) {
   e.preventDefault();
 
   $("#tenant-modal").modal("show");
+
   $(".modal-title").text("EDIT EXISTING TENANT INFORMATION");
 
   $("#stall_slots_id").val($(this).data("data1"));
@@ -148,6 +151,9 @@ $(".edit_tenant").click(function (e) {
   $("#phonenumber").val($(this).data("data5"));
   $("#location").val($(this).data("data6"));
   $("#manager_name").val($(this).data("data7"));
+  $("#tenant_account_id").val($(this).data("data8"));
+  $("#manager_username").hide().find("input").prop("required", false);
+  $("#manager_password").hide().find("input").prop("required", false);
 });
 
 //========stall slots end=========//
@@ -173,6 +179,13 @@ $(".edit_staff").click(function (e) {
   $("#username").val($(this).data("data4"));
   $("#phonenumber").val($(this).data("data5"));
   $("#address").val($(this).data("data6"));
+  const role = $(this).data("data7");
+
+  if (role == 3) {
+    $("#address").prop("required", false).closest(".form-floating").hide();
+  } else {
+    $("#address").prop("required", true).closest(".form-floating").show();
+  }
 });
 
 //========stall slots end=========//

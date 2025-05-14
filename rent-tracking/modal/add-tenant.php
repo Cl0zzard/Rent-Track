@@ -14,6 +14,8 @@
 					</div>
 					<input type="text" name="stall_slots_id" id="stall_slots_id" class="form-control rounded-1"
 						placeholder="input here" hidden>
+					<input type="text" name="tenant_account_id" id="tenant_account_id" class="form-control rounded-1"
+						placeholder="input here" hidden>
 					<div class="d-flex flex-column flex-lg-row gap-2 ">
 						<div class="form-floating w-100">
 							<input required type="text" name="tenantname" id="tenantname" class="form-control rounded-1"
@@ -40,10 +42,24 @@
 							<label for="phonenumber">Phone No.</label>
 						</div>
 					</div>
+
+
 					<div class="form-floating w-100">
 						<input required type="text" name="manager_name" id="manager_name" class="form-control rounded-1"
 							placeholder="input here" maxlength="50">
 						<label for="manager_name">Manager Name</label>
+					</div>
+
+					<div class="form-floating w-100" id="manager_username">
+						<input required type="text" name="manager_username" id="manager_username"
+							class="form-control rounded-1" placeholder="input here" maxlength="50">
+						<label for="manager_username">Manager Username</label>
+					</div>
+
+					<div class="form-floating w-100" id="manager_password">
+						<input required type="password" name="manager_password" id="manager_password"
+							class="form-control rounded-1" placeholder="input here" maxlength="50">
+						<label for="manager_password">Manager Password</label>
 					</div>
 					<div class="form-floating">
 						<select name="location" id="location" class="form-select rounded-1" required>

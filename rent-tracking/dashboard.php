@@ -29,31 +29,91 @@ include 'connect.php';
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <h5 class="m-0 fw-bold">Dashboard</h5>
                 </div>
+                <?php
+
+                if ($_SESSION['admin']['role'] == 3) {
+                    $stmt = $conn->prepare("SELECT tenantname FROM stall_slots WHERE tenant_account_id = ? AND status = 1 LIMIT 1");
+                    $stmt->execute([$_SESSION['admin']['admin_id']]);
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $tenantName = $row['tenantname'] ?? '';
+                    ?>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h5 class="m-0 fw-bold">Stall<?= $tenantName ? ' : ' . htmlspecialchars($tenantName) : '' ?>
+                        </h5>
+                    </div>
+                <?php } ?>
+
                 <div class="col-12 row row-gap-4">
 
                     <?php
-                    $queries = [
-                        [
-                            "background" => "#CB680BB5",
-                            "title" => "USA BED Campus",
-                            "sql" => "SELECT COUNT(*) as total 
-		                                FROM stall_slots 
-                                        WHERE location = '1' AND status = 1"
-                        ],
-                        [
-                            "background" => "#2AA06BB5",
-                            "title" => "USA Main Campus",
-                            "sql" => "SELECT COUNT(*) as total 
-		                                FROM stall_slots WHERE location = '2' AND status = 1"
-                        ],
-                        [
-                            "background" => "#27135DB5",
-                            "title" => "USA Main Kiosks",
-                            "sql" => "SELECT COUNT(*) as total 
-		                                FROM stall_slots WHERE location = '3' AND status = 1"
-                        ]
+                    $queries = [];
 
-                    ];
+                    if ($_SESSION['admin']['role'] == 1 || $_SESSION['admin']['role'] == 2) {
+                        // Role 1 or 2: Admins see all locations
+                        $queries = [
+                            [
+                                "background" => "#CB680BB5",
+                                "title" => "USA BED Campus",
+                                "sql" => "SELECT COUNT(*) as total 
+                      FROM stall_slots 
+                      WHERE location = '1' AND status = 1"
+                            ],
+                            [
+                                "background" => "#2AA06BB5",
+                                "title" => "USA Main Campus",
+                                "sql" => "SELECT COUNT(*) as total 
+                      FROM stall_slots 
+                      WHERE location = '2' AND status = 1"
+                            ],
+                            [
+                                "background" => "#27135DB5",
+                                "title" => "USA Main Kiosks",
+                                "sql" => "SELECT COUNT(*) as total 
+                      FROM stall_slots 
+                      WHERE location = '3' AND status = 1"
+                            ]
+                        ];
+                    } elseif ($_SESSION['admin']['role'] == 3) {
+                        $adminId = $_SESSION['admin']['admin_id'];
+
+                        // First, get the stall_slots_id for this tenant
+                        $stmt = $conn->prepare("SELECT stall_slots_id FROM stall_slots WHERE tenant_account_id = ? LIMIT 1");
+                        $stmt->execute([$adminId]);
+                        $slot = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $slotId = $slot['stall_slots_id'] ?? 0;
+
+                        // Now use this stall_slots_id to get latest transaction values
+                        $queries = [
+                            [
+                                "background" => "#CB680BB5",
+                                "title" => "Current Due",
+                                "sql" => "SELECT FORMAT(balance, 2) as total 
+                      FROM transaction_history 
+                      WHERE stall_slots_id = $slotId AND status = 2
+                      ORDER BY transaction_history_id DESC 
+                      LIMIT 1"
+                            ],
+                            [
+                                "background" => "#2AA06BB5",
+                                "title" => "Due Date",
+                                "sql" => "SELECT DATE_FORMAT(duedate, '%M %d, %Y') as total 
+                      FROM transaction_history 
+                      WHERE stall_slots_id = $slotId AND status = 2
+                      ORDER BY transaction_history_id DESC 
+                      LIMIT 1"
+                            ],
+                            [
+                                "background" => "#27135DB5",
+                                "title" => "Penalties/Outstanding Balance",
+                                "sql" => "SELECT FORMAT(penalty, 2) as total 
+                      FROM transaction_history 
+                      WHERE stall_slots_id = $slotId AND status = 2
+                      ORDER BY transaction_history_id DESC 
+                      LIMIT 1"
+                            ]
+                        ];
+                    }
+
 
 
                     foreach ($queries as $query) {
@@ -74,49 +134,75 @@ include 'connect.php';
                                     <div class="m-0 text-white">
                                         <?= $total ?>
                                     </div>
-                                    <i class="fas fa-store"></i>
+                                    <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
+                                        <i class="fas fa-store"></i>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     <?php } ?>
 
-                    <div class="col-12">
-                        <a target="_blank" href="print-graph.php" class=" btn btn-sm btn-secondary rounded-1 py-2">
-                            <i class="fa-solid fa-print me-2"></i><span>Print All Graph</span>
-                        </a>
-                    </div>
+                    <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
+                        <div class="col-12">
+                            <a target="_blank" href="print-graph.php" class=" btn btn-sm btn-secondary rounded-1 py-2">
+                                <i class="fa-solid fa-print me-2"></i><span>Print All Graph</span>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($_SESSION['admin']['role'] == 3):
+                        $stmt = $conn->prepare("SELECT stall_slots_id FROM stall_slots WHERE tenant_account_id = ? AND status = 1 LIMIT 1");
+                        $stmt->execute([$_SESSION['admin']['admin_id']]);
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $stallSlotId = $row['stall_slots_id'] ?? null;
+                        ?>
+                        <div class="col-12">
+                            <a href="transaction?stall_slots_id=<?= urlencode($stallSlotId) ?>"
+                                class="btn btn-sm btn-secondary rounded-1 py-2">
+                                <i class="fa-solid fa-print me-2"></i><span>View transactions</span>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+
+
 
                     <div class="col-12 row mx-0 gap-5">
-                        <!-- Bar Chart Container -->
-                        <div
-                            class="col-11 col-md-10 col-lg-8 shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
-                            <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold">
-                                Yearly Rate
-                            </div>
-                            <div class="w-100 p-3">
-                                <canvas id="myBarChart" style="width: 100%; height: 400px;"></canvas>
-                            </div>
-                        </div>
 
-                        <!-- Pie Chart Container -->
-                        <div
-                            class="col-11 col-md-5 col-lg-3 shadow d-flex flex-column align-items-center justify-content-center border border-1 p-0 rounded-2">
-                            <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold mb-auto">
-                                Rent Location Rate
+                        <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
+                            <!-- Bar Chart Container -->
+                            <div
+                                class="col-11 col-md-10 col-lg-8 shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
+                                <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold">
+                                    Yearly Rate
+                                </div>
+                                <div class="w-100 p-3">
+                                    <canvas id="myBarChart" style="width: 100%; height: 400px;"></canvas>
+                                </div>
                             </div>
-                            <div class="w-100 d-flex align-items-center justify-content-center p-3">
-                                <canvas id="statusPieChart" style="width: 100%; height: 400px;"></canvas>
+
+                            <!-- Pie Chart Container -->
+                            <div
+                                class="col-11 col-md-5 col-lg-3 shadow d-flex flex-column align-items-center justify-content-center border border-1 p-0 rounded-2">
+                                <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold mb-auto">
+                                    Rent Location Rate
+                                </div>
+                                <div class="w-100 d-flex align-items-center justify-content-center p-3">
+                                    <canvas id="statusPieChart" style="width: 100%; height: 400px;"></canvas>
+                                </div>
                             </div>
-                        </div>
-                        <div
-                            class="col-12 shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
-                            <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold">
-                                Monthly Rate
+                            <div
+                                class="col-12 shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
+                                <div class="text-center px-3 py-4 bg-secondary-subtle w-100 fw-bold">
+                                    Monthly Rate
+                                </div>
+                                <div class="w-100 p-3">
+                                    <canvas id="myBarChart3" style="width: 100%; height: 400px;"></canvas>
+                                </div>
                             </div>
-                            <div class="w-100 p-3">
-                                <canvas id="myBarChart3" style="width: 100%; height: 400px;"></canvas>
-                            </div>
-                        </div>
+
+                        <?php endif; ?>
+
+
+
                         <div
                             class="col-12 shadow d-flex flex-column align-items-center justify-content-between border border-1 p-0 rounded-2">
                             <?php
@@ -127,29 +213,55 @@ include 'connect.php';
                             // $calendar = new Calendar('2025-05-12');
                             
                             try {
-                                // Fetch transaction history with status = 2
-                                $stmt = $conn->prepare(
-                                    "SELECT ss.tenantname, th.duedate, th.stall_slots_id 
-                                FROM transaction_history th 
-                                JOIN stall_slots ss 
-                                ON th.stall_slots_id = ss.stall_slots_id 
-                                WHERE th.status = 2 AND ss.status = 1"
-                                );
+                                // Check role
+                                if ($_SESSION['admin']['role'] == 3) {
+                                    // Get the tenant's stall_slots_id
+                                    $stmt = $conn->prepare("SELECT stall_slots_id, tenantname FROM stall_slots WHERE tenant_account_id = ? AND status = 1 LIMIT 1");
+                                    $stmt->execute([$_SESSION['admin']['admin_id']]);
+                                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                                $stmt->execute();
-                                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                                if ($rows) {
-                                    foreach ($rows as $row) {
+                                    if ($row) {
                                         $stallSlotId = $row['stall_slots_id'];
-                                        $tenantName = $row['tenantname']; // From stall_slots table
-                                        $dueDate = $row['duedate'];       // From transaction_history table
-                            
-                                        $payNowLink = "<a href='transaction?stall_slots_id=" . urlencode($stallSlotId) . "' class='text-decoration-underline text-primary'>pay now</a>";
-                                        $calendar->add_event("$tenantName - $payNowLink", $dueDate, 1, 'orange');
+                                        $tenantName = $row['tenantname'];
+
+                                        // Get latest transaction with status = 2
+                                        $stmt = $conn->prepare("SELECT duedate FROM transaction_history WHERE stall_slots_id = ? AND status = 2 ORDER BY transaction_history_id DESC LIMIT 1");
+                                        $stmt->execute([$stallSlotId]);
+                                        $transaction = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                                        if ($transaction) {
+                                            $dueDate = $transaction['duedate'];
+                                            $payNowLink = "<a href='transaction?stall_slots_id=" . urlencode($stallSlotId) . "' class='text-decoration-underline text-primary'>pay now</a>";
+                                            $calendar->add_event("Due Balances - $payNowLink", $dueDate, 1, 'orange');
+                                        } else {
+                                            echo "<div class='p-2 text-danger'>No ongoing transaction found for your stall.</div>";
+                                        }
+                                    } else {
+                                        echo "<div class='p-2 text-danger'>Stall information not found for your account.</div>";
                                     }
                                 } else {
-                                    echo "<div class='p-2 text-danger'>No ongoing transactions found.</div>";
+                                    // Admin or staff view - fetch all due transactions
+                                    $stmt = $conn->prepare(
+                                        "SELECT ss.tenantname, th.duedate, th.stall_slots_id 
+                FROM transaction_history th 
+                JOIN stall_slots ss ON th.stall_slots_id = ss.stall_slots_id 
+                WHERE th.status = 2 AND ss.status = 1"
+                                    );
+                                    $stmt->execute();
+                                    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                    if ($rows) {
+                                        foreach ($rows as $row) {
+                                            $stallSlotId = $row['stall_slots_id'];
+                                            $tenantName = $row['tenantname'];
+                                            $dueDate = $row['duedate'];
+
+                                            $payNowLink = "<a href='transaction?stall_slots_id=" . urlencode($stallSlotId) . "' class='text-decoration-underline text-primary'>pay now</a>";
+                                            $calendar->add_event("$tenantName - $payNowLink", $dueDate, 1, 'orange');
+                                        }
+                                    } else {
+                                        echo "<div class='p-2 text-danger'>No ongoing transactions found.</div>";
+                                    }
                                 }
                             } catch (PDOException $e) {
                                 echo "<div class='p-2 text-danger'>Database error: " . $e->getMessage() . "</div>";
@@ -162,9 +274,6 @@ include 'connect.php';
                                 <?= $calendar ?>
                             </div>
                         </div>
-
-
-
 
                     </div>
 

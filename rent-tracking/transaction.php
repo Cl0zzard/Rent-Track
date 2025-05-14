@@ -112,9 +112,11 @@ if ($rows) {
                   class=" btn btn-sm btn-secondary rounded-1 py-2">
                   <i class="fa-solid fa-print me-2"></i><span>Print</span>
                 </a>
-                <a type="button" class="create_transaction btn btn-sm btn-primary rounded-1 py-2">
-                  <i class="fa-solid fa-circle-plus me-2"></i><span>Create Transaction</span>
-                </a>
+                <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
+                  <a type="button" class="create_transaction btn btn-sm btn-primary rounded-1 py-2">
+                    <i class="fa-solid fa-circle-plus me-2"></i><span>Create Transaction</span>
+                  </a>
+                <?php endif; ?>
               </div>
               <div class="d-flex d-lg-none align-items-center gap-2">
                 <a type="button" data-bs-toggle="modal" href="#transaction-modal"
@@ -164,7 +166,9 @@ if ($rows) {
                     <th>Status</th>
                     <!-- <th>Last Edited</th> -->
                     <th>Edited By</th>
-                    <th>Action</th>
+                    <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
+                      <th>Action</th>
+                    <?php endif; ?>
                   </tr>
                 </thead>
                 <tbody>
@@ -255,44 +259,47 @@ if ($rows) {
                         </td>
                         <!-- <td data-label="Last Edited"><?= $formatdateedited; ?></td> -->
                         <td><?= $row['edited_by_name'] . ' ' . $formatdateedited ?? 'No edits yet'; ?></td>
-                        <td data-label="Action" width="160">
-                          <div class="d-flex align-items-center column-gap-3">
-                            <small>
-                              <a type="button" class="pay_btn py-1 px-2 rounded-1 text-bg-success text-decoration-none d-flex align-items-center 
+                        <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
+                          <td data-label="Action" width="160">
+                            <div class="d-flex align-items-center column-gap-3">
+                              <small>
+                                <a type="button" class="pay_btn py-1 px-2 rounded-1 text-bg-success text-decoration-none d-flex align-items-center 
                     <?php echo ($th_status == 1 || $th_status == 3) ? 'disabled opacity-50' : ''; ?>"
-                                href="javascript:void(0);"
-                                data-data1="<?= $transaction_history_id ? $transaction_history_id : null; ?>"
-                                data-data2="<?= $duedate; ?>" data-data3="<?= $balance != null ? $balance : '0'; ?>" <?php echo ($th_status == 1 || $th_status == 3) ? 'style="pointer-events: none;"' : ''; ?>>
-                                <i class="fa-solid fa-wallet me-2"></i><span class="">Pay</span>
-                              </a>
-                              <!-- target="_blank" -->
-                            </small>
+                                  href="javascript:void(0);"
+                                  data-data1="<?= $transaction_history_id ? $transaction_history_id : null; ?>"
+                                  data-data2="<?= $duedate; ?>" data-data3="<?= $balance != null ? $balance : '0'; ?>" <?php echo ($th_status == 1 || $th_status == 3) ? 'style="pointer-events: none;"' : ''; ?>>
+                                  <i class="fa-solid fa-wallet me-2"></i><span class="">Pay</span>
+                                </a>
+                                <!-- target="_blank" -->
+                              </small>
 
-                            <small>
-                              <a type="button"
-                                class="edit_transaction py-1 px-2 rounded-1 text-bg-primary text-decoration-none d-flex align-items-center"
-                                data-data1="<?= $transaction_history_id ? $transaction_history_id : null; ?>"
-                                data-data2="<?= $balance != null ? $balance : '0'; ?>"
-                                data-data3="<?= $penalty != null ? $penalty : '0'; ?>" data-data4="<?= $status; ?>"
-                                data-data5="<?= $duedate; ?>">
-                                <i class="far fa-edit me-2 "></i><span class="">Edit</span>
-                              </a>
-                              <!-- target="_blank" -->
-                            </small>
-                            <?php
-                            if ($_SESSION['admin']['role'] === 1) {
-                              ?>
-                              <small class="delete_data py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
-                                role="button" data-id="<?= $transaction_history_id; ?>" data-table="transaction_history"
-                                data-type="transaction_history_id">
-                                <i class="far fa-trash-alt me-2 "></i><span class="">Delete</span>
+                              <small>
+                                <a type="button"
+                                  class="edit_transaction py-1 px-2 rounded-1 text-bg-primary text-decoration-none d-flex align-items-center"
+                                  data-data1="<?= $transaction_history_id ? $transaction_history_id : null; ?>"
+                                  data-data2="<?= $balance != null ? $balance : '0'; ?>"
+                                  data-data3="<?= $penalty != null ? $penalty : '0'; ?>" data-data4="<?= $status; ?>"
+                                  data-data5="<?= $duedate; ?>">
+                                  <i class="far fa-edit me-2 "></i><span class="">Edit</span>
+                                </a>
+                                <!-- target="_blank" -->
                               </small>
                               <?php
-                            }
-                            ?>
+                              if ($_SESSION['admin']['role'] === 1) {
+                                ?>
+                                <small class="delete_data py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
+                                  role="button" data-id="<?= $transaction_history_id; ?>" data-table="transaction_history"
+                                  data-type="transaction_history_id">
+                                  <i class="far fa-trash-alt me-2 "></i><span class="">Delete</span>
+                                </small>
+                                <?php
+                              }
+                              ?>
 
-                          </div>
-                        </td>
+                            </div>
+                          </td>
+                        <?php endif; ?>
+
                       </tr>
                     <?php endforeach;
                   } else { ?>

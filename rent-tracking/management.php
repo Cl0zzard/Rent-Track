@@ -148,8 +148,9 @@ include 'connect.php';
                     <th>Name</th>
                     <th>Email</th>
                     <th>Username</th>
+                    <th>Role</th>
                     <th>Phone No.</th>
-                    <th>Address</th>
+                    <th>Address/Stall</th>
                     <th><?= ($_GET['account_status'] == 1) ? 'Date Added' : 'Date Archived' ?></th>
                     <th>Action</th>
                   </tr>
@@ -177,7 +178,7 @@ include 'connect.php';
 
                   $sql = "SELECT *
                                   FROM admin_account
-                                  WHERE role = 2 AND status_archived = :account_status
+                                  WHERE role IN (2, 3) AND status_archived = :account_status
                                   LIMIT :limit OFFSET :offset";
                   $stmt = $conn->prepare($sql);
                   $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
@@ -202,10 +203,13 @@ include 'connect.php';
                         <td data-label="Name"><?= $name; ?></td>
                         <td data-label="Email"><?= $email; ?></td>
                         <td data-label="Username"><?= $username; ?></td>
+                        <td data-label="Role">
+                          <?= $role == 2 ? 'Staff' : ($role == 3 ? 'Tenant' : 'Unknown'); ?>
+                        </td>
                         <td data-label="Phone No.">
                           <?= $phonenumber; ?>
                         </td>
-                        <td data-label="Address">
+                        <td data-label="Address/Stall">
                           <?= $address; ?>
                         </td>
                         <td data-label="Date Added"><?= $formatdate; ?></td>
@@ -217,7 +221,7 @@ include 'connect.php';
                                   class="edit_staff py-1 px-2 rounded-1 text-bg-primary text-decoration-none d-flex align-items-center"
                                   data-data1="<?= $admin_id; ?>" data-data2="<?= $name; ?>" data-data3="<?= $email; ?>"
                                   data-data4="<?= $username; ?>" data-data5="<?= $phonenumber; ?>"
-                                  data-data6="<?= $address; ?>">
+                                  data-data6="<?= $address; ?>" data-data7="<?= $role; ?>">
                                   <i class="fa-solid fa-pen-to-square me-2 "></i><span class="">Edit</span>
                                 </a>
                               </small>

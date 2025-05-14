@@ -36,7 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // If updating
     if (isset($_POST['admin_id']) && !empty($_POST['admin_id'])) {
-        $sqlUpdate = "UPDATE admin_account SET name = :name, username = :username, email = :email, phonenumber = :phonenumber, address = :address";
+        $sqlUpdate = "UPDATE admin_account 
+                  SET name = :name, 
+                      username = :username, 
+                      email = :email, 
+                      phonenumber = :phonenumber, 
+                      address = :address";
 
         if (!empty($_POST['password'])) {
             $sqlUpdate .= ", password = :password";
@@ -57,6 +62,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if ($updateQuery->execute()) {
+
+            // 🆕 UPDATE stall_slots table based on admin_id == tenant_account_id
+            $sqlUpdateStall = "UPDATE stall_slots 
+                           SET email = :email, 
+                               phonenumber = :phonenumber, 
+                               manager_name = :manager_name 
+                           WHERE tenant_account_id = :tenant_account_id";
+
+            $updateStallQuery = $conn->prepare($sqlUpdateStall);
+            $updateStallQuery->bindParam(':email', $email);
+            $updateStallQuery->bindParam(':phonenumber', $phonenumber);
+            $updateStallQuery->bindParam(':manager_name', $name);
+            $updateStallQuery->bindParam(':tenant_account_id', $admin_id);
+
+            $updateStallQuery->execute();
+
             echo "<script>alert('Updated Staff Successfully!');</script>";
         } else {
             echo "<script>alert('Updating Staff Failed!');</script>";
