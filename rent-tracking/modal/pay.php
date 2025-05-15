@@ -14,11 +14,15 @@
                         class="form-control rounded-1">
                     <input type="hidden" name="transaction_history_id"
                         class="transaction_history_id form-control rounded-1">
-
                     <div class="form-floating w-100">
                         <input required type="number" name="amount_paid" id="amount_paid" class="form-control rounded-1"
                             placeholder="input here">
                         <label for="amount_paid">Amount Paid</label>
+                    </div>
+                    <div class="form-floating w-100">
+                        <input required type="number" name="downpayment" id="downpayment" class="form-control rounded-1"
+                            placeholder="input here" value="0">
+                        <label for="amount_paid">Advance Payment (if available)</label>
                     </div>
                     <div class="d-flex justify-content-end">
                         <button type="submit" class="save-button btn btn-primary rounded-1">Save</button>

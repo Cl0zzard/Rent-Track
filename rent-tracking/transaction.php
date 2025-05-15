@@ -161,6 +161,7 @@ if ($rows) {
                     <th>Location</th>
                     <th>Balance</th>
                     <th>Amount Paid</th>
+                    <th>Advance Payment</th>
                     <th>Outstanding + Penalty(2%)</th>
                     <th>Due Date</th>
                     <th>Status</th>
@@ -249,6 +250,9 @@ if ($rows) {
                         <td data-label="Balance">₱ <?= $balance != null ? number_format($balance, 2) : '0.00'; ?></td>
                         <td data-label="Amount Paid">₱
                           <?= $amount_paid != null ? number_format($amount_paid, 2) : '0.00'; ?>
+                        </td>
+                        <td data-label="Advance Payment">₱
+                          <?= $downpayment != null ? number_format($downpayment, 2) : '0.00'; ?>
                         </td>
                         <td data-label="Penalty">₱ <?= $penalty != null ? number_format($penalty, 2) : '0.00'; ?></td>
                         <td data-label="Due Date"><?= $duedate != null ? $formatdate : 'Incomplete'; ?></td>

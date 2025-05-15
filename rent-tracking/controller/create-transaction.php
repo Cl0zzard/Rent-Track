@@ -92,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $status = 1; // Paid
             }
 
-            $sql = "INSERT INTO transaction_history (stall_slots_id, balance, penalty, status, duedate)
-                    VALUES (:stall_slots_id, :balance, :penalty, :status, :duedate)";
+            $sql = "INSERT INTO transaction_history (stall_slots_id, balance, penalty, status, duedate, downpayment)
+                    VALUES (:stall_slots_id, :balance, :penalty, :status, :duedate, 0.00)";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':stall_slots_id', $stall_slots_id);
             $stmt->bindParam(':balance', $total_balance);
@@ -117,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $transaction_history_id = $_POST['transaction_history_id'];
         $amount_paid = floatval($_POST['amount_paid']);
+        $down_payment = floatval($_POST['downpayment']);
         $dateToday = date('F j, Y');
 
         $stmt = $conn->prepare("SELECT * FROM transaction_history th 
@@ -152,6 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sqlUpdate = "UPDATE transaction_history 
                           SET balance = :balance,
                               amount_paid = :amount_paid,
+                              downpayment = :downpayment,
                               status = :status,
                               completed_date = :completed_date,
                               transaction_edited_by = :edited_by,    
@@ -160,6 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $updateQuery = $conn->prepare($sqlUpdate);
             $updateQuery->bindParam(':balance', $updated_balance);
             $updateQuery->bindParam(':amount_paid', $updated_amount_paid);
+            $updateQuery->bindParam(':downpayment', $down_payment);
             $updateQuery->bindParam(':status', $status);
             $updateQuery->bindParam(':completed_date', $completed_date);
             $updateQuery->bindParam(':edited_by', $edited_by);
@@ -173,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $dateToday,
                     $formatdate,
                     $updated_balance,
+                    $down_payment,
                     $updated_amount_paid,
                     $row['penalty']
                 ) ? 'success' : 'failed';
@@ -191,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // 📨 Email sending function
-function sendReminderEmail($email, $tenantName, $dateToday, $formatdate, $balance, $updated_amount_paid, $penalty)
+function sendReminderEmail($email, $tenantName, $dateToday, $formatdate, $updated_balance, $down_payment, $updated_amount_paid, $penalty)
 {
     $mail = new PHPMailer(true);
     try {
@@ -216,15 +220,17 @@ function sendReminderEmail($email, $tenantName, $dateToday, $formatdate, $balanc
                     <th style='background-color: #f2f2f2;'>Balance</th>
                     <th style='background-color: #f2f2f2;'>Penalty</th>
                     <th style='background-color: #f2f2f2;'>Total Paid</th>
+                    <th style='background-color: #f2f2f2;'>Advance Payment</th>
                     <th style='background-color: #f2f2f2;'>Status</th>
                 </tr>
                 <tr>
                     <td style='text-align: center;'>$formatdate</td>
-                    <td style='text-align: center;'>₱" . number_format($balance, 2) . "</td>
+                    <td style='text-align: center;'>₱" . number_format($updated_balance, 2) . "</td>
                     <td style='text-align: center;'>₱" . number_format($penalty, 2) . "</td>
                     <td style='text-align: center;'>₱" . number_format($updated_amount_paid, 2) . "</td>
-                    <td style='text-align: center; font-weight: bold; color: " . ($balance <= 0 ? 'green' : 'red') . ";'>
-                        " . ($balance <= 0 ? 'Complete' : 'Incomplete') . "
+                    <td style='text-align: center;'>₱" . number_format($down_payment, 2) . "</td>
+                    <td style='text-align: center; font-weight: bold; color: " . ($updated_balance <= 0 ? 'green' : 'red') . ";'>
+                        " . ($updated_balance <= 0 ? 'Complete' : 'Incomplete') . "
                     </td>
                 </tr>
             </table>
