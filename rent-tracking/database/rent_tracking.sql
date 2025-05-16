@@ -139,7 +139,7 @@ CREATE TABLE `stall_slots_file` (
   PRIMARY KEY (`stall_slots_file_id`),
   KEY `stall_slots_id` (`stall_slots_id`),
   CONSTRAINT `stall_slots_id` FOREIGN KEY (`stall_slots_id`) REFERENCES `stall_slots` (`stall_slots_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -148,7 +148,35 @@ CREATE TABLE `stall_slots_file` (
 
 LOCK TABLES `stall_slots_file` WRITE;
 /*!40000 ALTER TABLE `stall_slots_file` DISABLE KEYS */;
+INSERT INTO `stall_slots_file` VALUES (36,NULL,'stall_baseOutfit.png');
 /*!40000 ALTER TABLE `stall_slots_file` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `transaction_file`
+--
+
+DROP TABLE IF EXISTS `transaction_file`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `transaction_file` (
+  `transaction_file_id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_history_id` int(11) NOT NULL,
+  `transactions_file` text NOT NULL,
+  PRIMARY KEY (`transaction_file_id`),
+  KEY `transaction_history_id` (`transaction_history_id`),
+  CONSTRAINT `transaction_file_ibfk_1` FOREIGN KEY (`transaction_history_id`) REFERENCES `transaction_history` (`transaction_history_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `transaction_file`
+--
+
+LOCK TABLES `transaction_file` WRITE;
+/*!40000 ALTER TABLE `transaction_file` DISABLE KEYS */;
+INSERT INTO `transaction_file` VALUES (1,386,'Tester_Stall_receipt_Character_Ref_Sheet.png'),(7,401,'Lorem_s_Ipsum_receipt_Character_Ref_Sheet.png');
+/*!40000 ALTER TABLE `transaction_file` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -311,4 +339,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-15 22:20:14
+-- Dump completed on 2025-05-16 18:54:53

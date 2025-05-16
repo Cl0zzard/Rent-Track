@@ -167,6 +167,7 @@ if ($rows) {
                     <th>Status</th>
                     <!-- <th>Last Edited</th> -->
                     <th>Edited By</th>
+                    <th>File</th>
                     <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
                       <th>Action</th>
                     <?php endif; ?>
@@ -263,12 +264,49 @@ if ($rows) {
                         </td>
                         <!-- <td data-label="Last Edited"><?= $formatdateedited; ?></td> -->
                         <td><?= $row['edited_by_name'] . ' ' . $formatdateedited ?? 'No edits yet'; ?></td>
-                        <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
-                          <td data-label="Action" width="160">
-                            <div class="d-flex align-items-center column-gap-3">
+                        <td data-label="File" style="min-width: 120px; max-width: 250px; word-break: break-word;">
+                          <?php
+                          $sql2 = "SELECT *
+                                        FROM transaction_file
+                                        WHERE transaction_history_id = :transaction_history_id";
+                          $stmt2 = $conn->prepare($sql2);
+                          $stmt2->bindParam(":transaction_history_id", $transaction_history_id);
+                          $stmt2->execute();
+                          $rows2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+                          if ($rows2) {
+                            foreach ($rows2 as $row2):
+                              ?>
+                              <div text-wrap class="mb-2 d-flex align-items-start column-gap-2">
+                                <a class="text-wrap"
+                                  href="upload/<?= $row2['transactions_file']; ?>"><?= $row2['transactions_file']; ?></a>
+                                <!-- target="_blank" -->
+                                <small class="delete_data" role="button" data-id="<?= $row2['transaction_file_id']; ?>"
+                                  data-table="transaction_file" data-type="transaction_file_id">
+                                  <i class="fa-solid fa-xmark text-danger "></i></span>
+                                </small>
+                              </div>
+                              <?php
+                            endforeach;
+                          } else {
+                            echo "No File";
+                          }
+                          ?>
+                        </td>
+                        <td data-label="Action" width="160">
+                          <div
+                            class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 flex-wrap">
+
+                            <small data-id="<?= $transaction_history_id; ?>" data-id2="<?= $stall_slots_id; ?>"
+                              role="button"
+                              class="upload_file py-1 px-2 rounded-1 text-bg-secondary text-decoration-none d-flex align-items-center">
+                              <i class="fa-solid fa-upload me-2"></i><span>Upload</span>
+                            </small>
+
+                            <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
                               <small>
                                 <a type="button" class="pay_btn py-1 px-2 rounded-1 text-bg-success text-decoration-none d-flex align-items-center 
-                    <?php echo ($th_status == 1 || $th_status == 3) ? 'disabled opacity-50' : ''; ?>"
+                              <?php echo ($th_status == 1 || $th_status == 3) ? 'disabled opacity-50' : ''; ?>"
                                   href="javascript:void(0);"
                                   data-data1="<?= $transaction_history_id ? $transaction_history_id : null; ?>"
                                   data-data2="<?= $duedate; ?>" data-data3="<?= $balance != null ? $balance : '0'; ?>" <?php echo ($th_status == 1 || $th_status == 3) ? 'style="pointer-events: none;"' : ''; ?>>
@@ -288,21 +326,22 @@ if ($rows) {
                                 </a>
                                 <!-- target="_blank" -->
                               </small>
-                              <?php
-                              if ($_SESSION['admin']['role'] === 1) {
-                                ?>
-                                <small class="delete_data py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
-                                  role="button" data-id="<?= $transaction_history_id; ?>" data-table="transaction_history"
-                                  data-type="transaction_history_id">
-                                  <i class="far fa-trash-alt me-2 "></i><span class="">Delete</span>
-                                </small>
-                                <?php
-                              }
-                              ?>
 
-                            </div>
-                          </td>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                            <?php
+                            if ($_SESSION['admin']['role'] === 1) {
+                              ?>
+                              <small class="delete_data py-1 px-2 rounded-1 text-bg-danger d-flex align-items-center"
+                                role="button" data-id="<?= $transaction_history_id; ?>" data-table="transaction_history"
+                                data-type="transaction_history_id">
+                                <i class="far fa-trash-alt me-2 "></i><span class="">Delete</span>
+                              </small>
+                              <?php
+                            }
+                            ?>
+
+                          </div>
+                        </td>
 
                       </tr>
                     <?php endforeach;
@@ -414,7 +453,20 @@ if ($rows) {
           }
         });
       });
+
+      $('.upload_file').click(function (e) {
+        $('#upload-modal').modal('show');
+
+        $('#transaction_history_id2').val($(this).data('id'));
+        $('#stall_slots_id2').val($(this).data('id2'));
+
+      });
     });
+
+
+
+
+
   </script>
 </body>
 
