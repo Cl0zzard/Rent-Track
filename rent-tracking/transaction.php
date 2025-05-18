@@ -15,6 +15,86 @@ $stmt->bindParam(":stall_slots_id", $get_stall_slots_id);
 $stmt->execute();
 $rows = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$admin_id = $_SESSION['admin']['admin_id'];
+$admin_role = $_SESSION['admin']['role'];
+
+// Determine which stalls to process
+if (in_array($admin_role, [1, 2])) {
+  $query = "
+        SELECT t.transaction_history_id, t.stall_slots_id, t.balance, t.amount_paid, t.penalty, t.duedate, t.status, t.downpayment
+        FROM transaction_history t
+        INNER JOIN (
+            SELECT stall_slots_id, MAX(transaction_history_id) AS max_id
+            FROM transaction_history
+            GROUP BY stall_slots_id
+        ) latest ON t.transaction_history_id = latest.max_id
+        INNER JOIN stall_slots s ON t.stall_slots_id = s.stall_slots_id
+        WHERE s.status = 1
+    ";
+  $stmt = $conn->prepare($query);
+  $stmt->execute();
+} else {
+  // For admin_role = 3, restrict to that user's stalls
+  $query = "
+        SELECT t.transaction_history_id, t.stall_slots_id, t.balance, t.amount_paid, t.penalty, t.duedate, t.status, t.downpayment
+        FROM transaction_history t
+        INNER JOIN (
+            SELECT stall_slots_id, MAX(transaction_history_id) AS max_id
+            FROM transaction_history
+            GROUP BY stall_slots_id
+        ) latest ON t.transaction_history_id = latest.max_id
+        INNER JOIN stall_slots s ON t.stall_slots_id = s.stall_slots_id
+        WHERE s.status = 1 AND s.tenant_account_id = :admin_id
+    ";
+  $stmt = $conn->prepare($query);
+  $stmt->execute(['admin_id' => $admin_id]);
+}
+
+$transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($transactions as $t) {
+  $cur_stall_id = $t['stall_slots_id'];
+  $cur_balance = $t['balance'];
+  $cur_paid = $t['amount_paid'];
+  $cur_penalty = $t['penalty'];
+  $cur_duedate = $t['duedate'];
+  $cur_status = $t['status'];
+  $cur_downpayment = $t['downpayment'];
+
+  // Get monthly rent
+  $stmt_rent = $conn->prepare("SELECT monthly FROM stall_slots WHERE stall_slots_id = ?");
+  $stmt_rent->execute([$cur_stall_id]);
+  $monthly_rent = $stmt_rent->fetchColumn();
+
+  // Compute penalty
+  $computed_penalty = ($cur_status == 3) ? (0.02 * $monthly_rent) + $cur_balance : 0.00;
+
+  // New values
+  $new_balance = $monthly_rent + $computed_penalty - $cur_downpayment;
+  $new_duedate = date('Y-m-d H:i:s', strtotime($cur_duedate . ' +30 days'));
+  $now = date('Y-m-d H:i:s');
+  $new_status = ($new_duedate < $now) ? 3 : 2;
+
+  // Insert only if status is paid or overdue
+  if (in_array($cur_status, [1, 3])) {
+    $stmt_insert = $conn->prepare("
+            INSERT INTO transaction_history (
+                stall_slots_id, balance, amount_paid, penalty, duedate, status, completed_date, downpayment
+            ) VALUES (
+                :stall_slots_id, :balance, 0.00, :penalty, :duedate, :status, NULL, 0.00
+            )
+        ");
+
+    $stmt_insert->execute([
+      'stall_slots_id' => $cur_stall_id,
+      'balance' => $new_balance,
+      'penalty' => $computed_penalty,
+      'duedate' => $new_duedate,
+      'status' => $new_status
+    ]);
+  }
+}
+
 if ($rows) {
   $tenantname = $rows['tenantname'];
 }

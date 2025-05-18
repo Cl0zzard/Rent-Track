@@ -98,94 +98,105 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        // Check if the tenant name already exists
-        $sqlSelect = "SELECT 1 FROM stall_slots WHERE tenantname = :tenantname LIMIT 1";
-        $slctQuery = $conn->prepare($sqlSelect);
-        $slctQuery->bindParam(':tenantname', $tenantname);
-        $slctQuery->execute();
+        try {
+            $conn->beginTransaction();
 
-        if ($slctQuery->rowCount() > 0) {
-            echo "<script>alert('Stall Name Already Exists!');</script>";
-            echo $alert;
-            exit();
-        }
+            // Check if tenant name already exists
+            $sqlSelect = "SELECT 1 FROM stall_slots WHERE tenantname = :tenantname LIMIT 1";
+            $slctQuery = $conn->prepare($sqlSelect);
+            $slctQuery->bindParam(':tenantname', $tenantname);
+            $slctQuery->execute();
 
-        // Check if the manager already manages another account
-        $sqlCheckManager = "SELECT 1 FROM admin_account WHERE email = :email OR username = :username LIMIT 1";
-        $checkQuery = $conn->prepare($sqlCheckManager);
-        $checkQuery->bindParam(':email', $email);
-        $checkQuery->bindParam(':username', $manager_username);
-        $checkQuery->execute();
-
-        if ($checkQuery->rowCount() > 0) {
-            echo "<script>alert('User already manages other accounts');</script>";
-            echo $alert;
-            exit();
-        }
-
-        // Then insert into admin_account
-        $insertAdmin = "INSERT INTO admin_account (username, password, name, email, address, phonenumber, role) 
-        VALUES (:username, :password, :name, :email, :tenantname, :phonenumber, 3)";
-        $stmtAdmin = $conn->prepare($insertAdmin);
-        $stmtAdmin->bindParam(":username", $manager_username); // you need to define this earlier
-        $stmtAdmin->bindParam(":password", $manager_password); // should be hashed
-        $stmtAdmin->bindParam(":name", $manager_name);
-        $stmtAdmin->bindParam(":email", $email);
-        $stmtAdmin->bindParam(":tenantname", $tenantname); // maps to `address`
-        $stmtAdmin->bindParam(":phonenumber", $phonenumber);
-        $stmtAdmin->execute();
-
-        // Get the new tenant's account ID
-        $tenantAccountId = $conn->lastInsertId();
-
-        // Insert new tenant and send confirmation email
-        $insert = "INSERT INTO stall_slots (tenantname, monthly, email, phonenumber, location, manager_name, confirmation_token, tenant_account_id) 
-                   VALUES (:tenantname, :monthly, :email, :phonenumber, :location, :manager_name, :confirmation_token, :tenant_account_id)";
-        $stmt = $conn->prepare($insert);
-        $stmt->bindParam(":tenantname", $tenantname);
-        $stmt->bindParam(":monthly", $monthly);
-        $stmt->bindParam(":email", $email);
-        $stmt->bindParam(":phonenumber", $phonenumber);
-        $stmt->bindParam(":location", $location);
-        $stmt->bindParam(":manager_name", $manager_name);
-        $stmt->bindParam(":confirmation_token", $confirmation_token);
-        $stmt->bindParam(':tenant_account_id', $tenantAccountId); // Bind the FK
-
-        if ($stmt->execute()) {
-            // Send confirmation email with the token
-            $mail = new PHPMailer(true);
-            try {
-                $mail->isSMTP();
-                $mail->Host = "smtp.gmail.com";
-                $mail->SMTPAuth = true;
-                $mail->Username = "renttrackusa@gmail.com";
-                $mail->Password = 'jkonlajueioaocgj';
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = 587;
-
-                // Recipients
-                $mail->setFrom('renttrackusa@gmail.com', "Rent Track");
-                $mail->addAddress($email);
-
-                // Content
-                $mail->isHTML(true);
-                $mail->Subject = 'Confirm Your Email';
-                $mail->Body = 'Please confirm your email by clicking the following link: 
-                                  <a href="http://localhost/Rent-Track/rent-tracking/confirm-email.php?token=' . $confirmation_token . '">Confirm Email</a>';
-
-                $mail->send();
-                echo "<script>alert('Tenant added. Have the tenant confirm their email!');</script>";
+            if ($slctQuery->rowCount() > 0) {
+                echo "<script>alert('Stall Name Already Exists!');</script>";
                 echo $alert;
-            } catch (Exception $e) {
-                echo "<script>alert('Message could not be sent. Mailer Error: {$mail->ErrorInfo}');</script>";
-                echo $alert;
+                exit();
             }
+
+            // Check if the manager already manages another account
+            $sqlCheckManager = "SELECT 1 FROM admin_account WHERE email = :email OR username = :username LIMIT 1";
+            $checkQuery = $conn->prepare($sqlCheckManager);
+            $checkQuery->bindParam(':email', $email);
+            $checkQuery->bindParam(':username', $manager_username);
+            $checkQuery->execute();
+
+            if ($checkQuery->rowCount() > 0) {
+                echo "<script>alert('User already manages other accounts');</script>";
+                echo $alert;
+                exit();
+            }
+
+            // Insert into admin_account
+            $insertAdmin = "INSERT INTO admin_account (username, password, name, email, address, phonenumber, role) 
+        VALUES (:username, :password, :name, :email, :tenantname, :phonenumber, 3)";
+            $stmtAdmin = $conn->prepare($insertAdmin);
+            $stmtAdmin->bindParam(":username", $manager_username);
+            $stmtAdmin->bindParam(":password", $manager_password); // should be hashed
+            $stmtAdmin->bindParam(":name", $manager_name);
+            $stmtAdmin->bindParam(":email", $email);
+            $stmtAdmin->bindParam(":tenantname", $tenantname); // mapped to address
+            $stmtAdmin->bindParam(":phonenumber", $phonenumber);
+            $stmtAdmin->execute();
+
+            $tenantAccountId = $conn->lastInsertId();
+
+            // Insert new stall
+            $insert = "INSERT INTO stall_slots (tenantname, monthly, email, phonenumber, location, manager_name, confirmation_token, tenant_account_id, status) 
+           VALUES (:tenantname, :monthly, :email, :phonenumber, :location, :manager_name, :confirmation_token, :tenant_account_id, 1)";
+            $stmt = $conn->prepare($insert);
+            $stmt->bindParam(":tenantname", $tenantname);
+            $stmt->bindParam(":monthly", $monthly);
+            $stmt->bindParam(":email", $email);
+            $stmt->bindParam(":phonenumber", $phonenumber);
+            $stmt->bindParam(":location", $location);
+            $stmt->bindParam(":manager_name", $manager_name);
+            $stmt->bindParam(":confirmation_token", $confirmation_token);
+            $stmt->bindParam(':tenant_account_id', $tenantAccountId);
+            $stmt->execute();
+
+            $stallSlotId = $conn->lastInsertId();
+
+            // Insert transaction history
+            $insertHistory = "INSERT INTO transaction_history (
+        stall_slots_id, balance, amount_paid, penalty, duedate, status, completed_date, downpayment
+    ) VALUES (
+        :stall_slots_id, :balance, 0.00, 0.00, DATE_ADD(NOW(), INTERVAL 30 DAY), 2, NULL, 0.00
+    )";
+            $stmtHistory = $conn->prepare($insertHistory);
+            $stmtHistory->bindParam(":stall_slots_id", $stallSlotId);
+            $stmtHistory->bindParam(":balance", $monthly);
+            $stmtHistory->execute();
+
+            $conn->commit();
+
+            // Send confirmation email
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host = "smtp.gmail.com";
+            $mail->SMTPAuth = true;
+            $mail->Username = "renttrackusa@gmail.com";
+            $mail->Password = 'jkonlajueioaocgj';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+            $mail->setFrom('renttrackusa@gmail.com', "Rent Track");
+            $mail->addAddress($email);
+            $mail->isHTML(true);
+            $mail->Subject = 'Confirm Your Email';
+            $mail->Body = 'Please confirm your email by clicking the following link: 
+        <a href="http://localhost/Rent-Track/rent-tracking/confirm-email.php?token=' . $confirmation_token . '">Confirm Email</a>';
+
+            $mail->send();
+
+            echo "<script>alert('Tenant added. Have the tenant confirm their email!');</script>";
+            echo $alert;
             exit();
-        } else {
-            echo "<script>alert('Adding Tenant Failed!');</script>";
+        } catch (Exception $e) {
+            $conn->rollBack();
+            echo "<script>alert('Error occurred: {$e->getMessage()}');</script>";
             echo $alert;
             exit();
         }
+
     }
 }
 ?>
