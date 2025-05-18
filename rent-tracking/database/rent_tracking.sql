@@ -36,7 +36,7 @@ CREATE TABLE `admin_account` (
   `status_archived` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=unarchived 2= archived	',
   `date_archived` date DEFAULT NULL,
   PRIMARY KEY (`admin_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,7 @@ CREATE TABLE `admin_account` (
 
 LOCK TABLES `admin_account` WRITE;
 /*!40000 ALTER TABLE `admin_account` DISABLE KEYS */;
-INSERT INTO `admin_account` VALUES (1,'admin','jpantoja@usa.edu.ph','admin','$2y$10$gLAl36tAIQDDSJjHjO18nOkr2agi/sW4qY9YDj9.z9fQUTnf4olOO','ea9954673fbce5ceced9c3e8356659f2859935b0c00cfffa57790f728a10b03cc03bc55cd364913c9ca741c44ab3d7993aeb',1,'2025-04-10','',NULL,1,NULL),(6,'Janelle','jpantoja@usa.edu.ph','Staff','$2y$10$Lt2oFwjA2WXvKMzTAPmcfu5bMD4jCXoQz9Y04H/8BTDqUwxqq70ZW',NULL,2,'2025-04-15','aaa','686987',1,NULL),(41,'Hoshimachi Suisei','dannylreyes36@gmail.com','LoremThe2nd','$2y$10$cxvsUpEftuGWwxZvGND1iOZAar4F2x9eato3IordNnU0ZDMsbr/aO',NULL,3,'2025-05-09','Tester Stall','09667332990',1,NULL),(42,'Azki','danielreysoma@gmail.com','Lorem','$2y$10$bTXLPAv5XFkT/PZERcL3L.qSzWRbJtG7A//szvuLNWvZqskzPVVby',NULL,3,'2025-05-15','Lorem\'s Ipsum','09667332990',1,NULL);
+INSERT INTO `admin_account` VALUES (1,'admin','jpantoja@usa.edu.ph','admin','$2y$10$gLAl36tAIQDDSJjHjO18nOkr2agi/sW4qY9YDj9.z9fQUTnf4olOO','ea9954673fbce5ceced9c3e8356659f2859935b0c00cfffa57790f728a10b03cc03bc55cd364913c9ca741c44ab3d7993aeb',1,'2025-04-10','',NULL,1,NULL),(6,'Janelle','jpantoja@usa.edu.ph','Staff','$2y$10$Lt2oFwjA2WXvKMzTAPmcfu5bMD4jCXoQz9Y04H/8BTDqUwxqq70ZW',NULL,2,'2025-04-15','aaa','686987',1,NULL),(41,'Hoshimachi Suisei','dannylreyes36@gmail.com','LoremThe2nd','$2y$10$cxvsUpEftuGWwxZvGND1iOZAar4F2x9eato3IordNnU0ZDMsbr/aO',NULL,3,'2025-05-09','Tester Stall','09667332990',1,NULL),(43,'Azki','danielreysoma@gmail.com','Lorem','$2y$10$VwBMFvJ2pEo8ypw3a8Qw5.32BGlq7c7OIAVTete9W7tV6HxQeVhsu',NULL,3,'2025-05-17','Lorem\'s Ipsum','09667332990',1,NULL);
 /*!40000 ALTER TABLE `admin_account` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -73,7 +73,7 @@ CREATE TABLE `stall_slots` (
   `confirmed` tinyint(1) DEFAULT 0,
   `confirmation_token` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`stall_slots_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,48 +82,9 @@ CREATE TABLE `stall_slots` (
 
 LOCK TABLES `stall_slots` WRITE;
 /*!40000 ALTER TABLE `stall_slots` DISABLE KEYS */;
-INSERT INTO `stall_slots` VALUES (70,41,'Tester Stall',10000.00,'dannylreyes36@gmail.com','09667332990',1,'2025-05-09',NULL,NULL,'2025-05-09',1,'Hoshimachi Suisei',1,'3dfc85429b68ed30025ae78cd8ad5265'),(71,42,'Lorem\'s Ipsum',10000.00,'danielreysoma@gmail.com','09667332990',1,'2025-05-15',NULL,NULL,'2025-05-15',1,'Azki',1,'47fcb40fa944a4d7831f969ea238aab8');
+INSERT INTO `stall_slots` VALUES (70,41,'Tester Stall',10000.00,'dannylreyes36@gmail.com','09667332990',1,'2025-05-09',NULL,NULL,'2025-05-09',1,'Hoshimachi Suisei',1,'3dfc85429b68ed30025ae78cd8ad5265'),(72,43,'Lorem\'s Ipsum',3000.00,'danielreysoma@gmail.com','09667332990',1,'2025-05-17',NULL,NULL,'2025-05-17',1,'Azki',1,'6117dfc75bf8ebbed77239b65da0f6c4');
 /*!40000 ALTER TABLE `stall_slots` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_stall_insert` AFTER INSERT ON `stall_slots` FOR EACH ROW BEGIN
-    -- Only create a new entry for unarchived stalls (status = 1)
-    IF NEW.status = 1 THEN
-        -- Insert a new transaction history entry for the newly registered stall
-        INSERT INTO transaction_history (
-            stall_slots_id, 
-            balance, 
-            amount_paid, 
-            penalty, 
-            duedate, 
-            status, 
-            completed_date,
-            downpayment
-        ) VALUES (
-            NEW.stall_slots_id,            -- Stall ID from the new stall record
-            NEW.monthly,                   -- Use the 'monthly' value from stall_slots as the balance
-            0.00,                          -- Amount paid (starts as 0)
-            0.00,                          -- Penalty (starts as 0)
-            DATE_ADD(NOW(), INTERVAL 30 DAY),  -- Set due date to 30 days from now
-            2,                             -- Status 2 (ongoing)
-            NULL,                          -- No completed date for new transactions
-            0.00                           -- Downpayment starts as 0.00
-        );
-    END IF;
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `stall_slots_file`
@@ -166,7 +127,7 @@ CREATE TABLE `transaction_file` (
   PRIMARY KEY (`transaction_file_id`),
   KEY `transaction_history_id` (`transaction_history_id`),
   CONSTRAINT `transaction_file_ibfk_1` FOREIGN KEY (`transaction_history_id`) REFERENCES `transaction_history` (`transaction_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,7 +136,7 @@ CREATE TABLE `transaction_file` (
 
 LOCK TABLES `transaction_file` WRITE;
 /*!40000 ALTER TABLE `transaction_file` DISABLE KEYS */;
-INSERT INTO `transaction_file` VALUES (1,386,'Tester_Stall_receipt_Character_Ref_Sheet.png'),(7,401,'Lorem_s_Ipsum_receipt_Character_Ref_Sheet.png');
+INSERT INTO `transaction_file` VALUES (1,386,'Tester_Stall_receipt_Character_Ref_Sheet.png'),(8,401,'Lorem_s_Ipsum_receipt_Publication-PEO-II-IT.pdf');
 /*!40000 ALTER TABLE `transaction_file` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,7 +160,7 @@ CREATE TABLE `transaction_history` (
   `transaction_edited_by` int(11) DEFAULT NULL,
   `transaction_date_edited` date DEFAULT NULL,
   PRIMARY KEY (`transaction_history_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=408 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=416 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -208,7 +169,7 @@ CREATE TABLE `transaction_history` (
 
 LOCK TABLES `transaction_history` WRITE;
 /*!40000 ALTER TABLE `transaction_history` DISABLE KEYS */;
-INSERT INTO `transaction_history` VALUES (379,63,10000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(380,64,6000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(381,65,1123414.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(382,66,10000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(383,67,6000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(384,68,10000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(386,70,10000.00,0.00,0.00,NULL,'2025-05-16',2,NULL,1,'2025-05-14'),(395,69,0.00,10000.00,0.00,1000.00,'2025-05-15',1,'2025-05-15',1,'2025-05-15'),(401,71,0.00,10000.00,0.00,0.00,'2025-05-15',1,'2025-05-15',1,'2025-05-15'),(402,71,10000.00,0.00,0.00,0.00,'2025-05-13',3,NULL,1,'2025-05-15'),(403,71,0.00,20200.00,10200.00,5000.00,'2025-06-12',1,'2025-05-15',1,'2025-05-15'),(404,71,0.00,5000.00,0.00,0.00,'2025-07-12',1,'2025-05-15',1,'2025-05-15'),(405,71,0.00,10000.00,0.00,5000.00,'2025-08-11',1,'2025-05-15',1,'2025-05-15'),(406,71,5000.00,0.00,0.00,0.00,'2025-05-13',3,NULL,1,'2025-05-15'),(407,71,15200.00,0.00,5200.00,0.00,'2025-06-12',2,NULL,NULL,NULL);
+INSERT INTO `transaction_history` VALUES (379,63,10000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(380,64,6000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(381,65,1123414.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(382,66,10000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(383,67,6000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(384,68,10000.00,0.00,0.00,NULL,'2025-06-08',2,NULL,NULL,NULL),(386,70,10000.00,0.00,0.00,NULL,'2025-05-16',2,NULL,1,'2025-05-14'),(395,69,0.00,10000.00,0.00,1000.00,'2025-05-15',1,'2025-05-15',1,'2025-05-15'),(401,71,0.00,10000.00,0.00,0.00,'2025-05-15',1,'2025-05-15',1,'2025-05-15'),(402,71,10000.00,0.00,0.00,0.00,'2025-05-13',3,NULL,1,'2025-05-15'),(403,71,0.00,20200.00,10200.00,5000.00,'2025-06-12',1,'2025-05-15',1,'2025-05-15'),(404,71,0.00,5000.00,0.00,0.00,'2025-07-12',1,'2025-05-15',1,'2025-05-15'),(405,71,0.00,10000.00,0.00,5000.00,'2025-08-11',1,'2025-05-15',1,'2025-05-15'),(406,71,5000.00,0.00,0.00,0.00,'2025-05-13',3,NULL,1,'2025-05-15'),(407,71,15200.00,0.00,5200.00,0.00,'2025-06-12',2,NULL,NULL,NULL),(408,72,0.00,3000.00,0.00,0.00,'2025-06-16',1,'2025-05-18',1,'2025-05-18'),(409,72,0.00,3000.00,0.00,0.00,'2025-07-16',1,'2025-05-18',1,'2025-05-18'),(410,72,3000.00,0.00,0.00,0.00,'2025-05-15',3,NULL,1,'2025-05-18'),(411,72,6060.00,0.00,3060.00,0.00,'2025-04-16',3,NULL,6,'2025-05-18'),(412,72,9120.00,0.00,6120.00,0.00,'2025-05-16',3,NULL,NULL,NULL),(413,72,0.00,12180.00,9180.00,2000.00,'2025-06-15',1,'2025-05-18',6,'2025-05-18'),(414,72,1000.00,0.00,0.00,0.00,'2025-05-17',3,NULL,6,'2025-05-18'),(415,72,4060.00,0.00,1060.00,0.00,'2025-06-16',2,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `transaction_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,4 +300,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-16 18:54:53
+-- Dump completed on 2025-05-18 16:36:23
