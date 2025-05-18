@@ -59,7 +59,7 @@ foreach ($transactions as $t) {
   $cur_penalty = $t['penalty'];
   $cur_duedate = $t['duedate'];
   $cur_status = $t['status'];
-  $cur_downpayment = $t['downpayment'];
+  $cur_downpayment = $t['downpayment']; // carry this over
 
   // Get monthly rent
   $stmt_rent = $conn->prepare("SELECT monthly FROM stall_slots WHERE stall_slots_id = ?");
@@ -69,25 +69,27 @@ foreach ($transactions as $t) {
   // Compute penalty
   $computed_penalty = ($cur_status == 3) ? (0.02 * $monthly_rent) + $cur_balance : 0.00;
 
-  // New values
+  // Calculate new balance and new amount_paid (consider downpayment)
   $new_balance = $monthly_rent + $computed_penalty - $cur_downpayment;
-  $new_duedate = date('Y-m-d H:i:s', strtotime($cur_duedate . ' +30 days'));
-  $now = date('Y-m-d H:i:s');
-  $new_status = ($new_duedate < $now) ? 3 : 2;
+  $new_amount_paid = $cur_downpayment;
 
-  // Insert only if status is paid or overdue
+  // Determine status
+  $new_status = ($new_balance <= 0) ? 1 : ((strtotime($cur_duedate . ' +30 days') < time()) ? 3 : 2);
+  $new_duedate = date('Y-m-d H:i:s', strtotime($cur_duedate . ' +30 days'));
+
   if (in_array($cur_status, [1, 3])) {
     $stmt_insert = $conn->prepare("
             INSERT INTO transaction_history (
                 stall_slots_id, balance, amount_paid, penalty, duedate, status, completed_date, downpayment
             ) VALUES (
-                :stall_slots_id, :balance, 0.00, :penalty, :duedate, :status, NULL, 0.00
+                :stall_slots_id, :balance, :amount_paid, :penalty, :duedate, :status, NULL, 0.00
             )
         ");
 
     $stmt_insert->execute([
       'stall_slots_id' => $cur_stall_id,
       'balance' => $new_balance,
+      'amount_paid' => $new_amount_paid,
       'penalty' => $computed_penalty,
       'duedate' => $new_duedate,
       'status' => $new_status
