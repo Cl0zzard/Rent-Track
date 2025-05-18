@@ -248,9 +248,7 @@ if ($rows) {
                     <!-- <th>Last Edited</th> -->
                     <th>Edited By</th>
                     <th>File</th>
-                    <?php if (in_array($_SESSION['admin']['role'], [1, 2])): ?>
-                      <th>Action</th>
-                    <?php endif; ?>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
